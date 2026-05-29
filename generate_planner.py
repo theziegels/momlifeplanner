@@ -116,7 +116,7 @@ def make_cover(wb):
     TOTAL_COLS = 20
     landscape_all(ws, rows=50, cols=TOTAL_COLS)
     for c in range(1, TOTAL_COLS+1):
-        ws.column_dimensions[get_column_letter(c)].width = 6.8
+        ws.column_dimensions[get_column_letter(c)].width = 9.5
     for r in range(1, 50):
         ws.row_dimensions[r].height = 14
 
@@ -202,7 +202,7 @@ def make_how_to_use(wb):
     ws.column_dimensions["A"].width = 1.5
     ws.column_dimensions["B"].width = 2.0   # narrow accent strip
     for c in range(3, TOTAL_COLS+1):
-        ws.column_dimensions[get_column_letter(c)].width = 6.2
+        ws.column_dimensions[get_column_letter(c)].width = 7.8
 
     for r in range(1, 56): ws.row_dimensions[r].height = 14
     bg(ws, 1, 1, 56, TOTAL_COLS, CREAM)
@@ -299,7 +299,8 @@ def make_important_contacts(wb):
         ws.cell(r, 1).alignment = al("left","center")
         for hc1, hc2 in [(2,5),(7,10),(12,16),(18,22)]:
             cell = mc(ws, r, hc1, r, hc2)
-            cell.border = bdr(bottom=sd("thin", WARM_DARK))
+            cell.border = bdr(bottom=sd("dotted", WARM_DARK))
+        dot_line(ws, r+1, 2, 22)
         r += 2
     return ws
 
@@ -400,10 +401,10 @@ def make_monthly_layout(wb, year, month):
     # 7 day cols + divider + 3 notes cols — widened to fill landscape page
     landscape_all(ws, scale=80, rows=52, cols=10)
 
-    for d in range(1, 8):  ws.column_dimensions[get_column_letter(d)].width = 14.0
+    for d in range(1, 8):  ws.column_dimensions[get_column_letter(d)].width = 17.0
     ws.column_dimensions["H"].width = 0.8
-    ws.column_dimensions["I"].width = 17
-    ws.column_dimensions["J"].width = 17
+    ws.column_dimensions["I"].width = 22
+    ws.column_dimensions["J"].width = 22
 
     LINES = 5; BLOCK = 1 + LINES
 
@@ -634,7 +635,7 @@ def make_goals_page(wb, goal_type):
     TOTAL_COLS = 22
     landscape_all(ws, rows=55, cols=TOTAL_COLS)
     for c in range(1, TOTAL_COLS+1):
-        ws.column_dimensions[get_column_letter(c)].width = 6.0
+        ws.column_dimensions[get_column_letter(c)].width = 8.5
     for r in range(1, 55): ws.row_dimensions[r].height = 14
     bg(ws, 1, 1, 55, TOTAL_COLS, CREAM)
     bg(ws, 1, 1, 4,  TOTAL_COLS, WARM_LIGHT)
@@ -697,7 +698,7 @@ def make_brain_map(wb):
     TOTAL_COLS = 28
     landscape_all(ws, rows=50, cols=TOTAL_COLS)
     for c in range(1, TOTAL_COLS+1):
-        ws.column_dimensions[get_column_letter(c)].width = 4.5
+        ws.column_dimensions[get_column_letter(c)].width = 6.0
     for r in range(1, 50): ws.row_dimensions[r].height = 13
     bg(ws, 1, 1, 50, TOTAL_COLS, CREAM)
     bg(ws, 1, 1, 3,  TOTAL_COLS, WARM_LIGHT)
@@ -740,7 +741,7 @@ def make_brainstorm(wb):
     TOTAL_COLS = 28
     landscape_all(ws, rows=50, cols=TOTAL_COLS)
     for c in range(1, TOTAL_COLS+1):
-        ws.column_dimensions[get_column_letter(c)].width = 4.5
+        ws.column_dimensions[get_column_letter(c)].width = 6.0
     for r in range(1, 50): ws.row_dimensions[r].height = 13
     bg(ws, 1, 1, 50, TOTAL_COLS, CREAM)
     bg(ws, 1, 1, 3,  TOTAL_COLS, WARM_LIGHT)
@@ -784,7 +785,7 @@ def make_vision_board(wb):
     TOTAL_COLS = 22
     landscape_all(ws, rows=50, cols=TOTAL_COLS)
     for c in range(1, TOTAL_COLS+1):
-        ws.column_dimensions[get_column_letter(c)].width = 6.2
+        ws.column_dimensions[get_column_letter(c)].width = 7.5
     for r in range(1, 50): ws.row_dimensions[r].height = 13
     bg(ws, 1, 1, 50, TOTAL_COLS, CREAM)
     bg(ws, 1, 1, 4,  TOTAL_COLS, WARM_LIGHT)
@@ -830,7 +831,7 @@ def make_bucket_list(wb):
     TOTAL_COLS = 22
     landscape_all(ws, rows=52, cols=TOTAL_COLS)
     for c in range(1, TOTAL_COLS+1):
-        ws.column_dimensions[get_column_letter(c)].width = 6.3
+        ws.column_dimensions[get_column_letter(c)].width = 9.5
     bg(ws, 1, 1, 55, TOTAL_COLS, CREAM)
     bg(ws, 1, 1, 4,  TOTAL_COLS, WARM_LIGHT)
 
@@ -857,7 +858,7 @@ def make_bucket_list(wb):
         c.alignment = al("left","center")
         bg(ws, sr, 2, sr, TOTAL_COLS, ACCENT_LIGHT)
 
-        for lr in range(sr+2, sr+10):
+        for lr in range(sr+1, sr+10):
             ws.row_dimensions[lr].height = 18
             ws.cell(lr, 2).value = "○"
             ws.cell(lr, 2).font  = mf(9, color=ACCENT)
@@ -1066,11 +1067,11 @@ def make_next_year_page(wb):
     landscape_all(ws, scale=80, rows=54, cols=TOTAL_COLS)
 
     # Column widths
-    for c in range(1, 24):       ws.column_dimensions[get_column_letter(c)].width = 3.8
+    for c in range(1, 24):       ws.column_dimensions[get_column_letter(c)].width = 4.8
     ws.column_dimensions[get_column_letter(8)].width  = 1.2   # gap between cal 1 & 2
     ws.column_dimensions[get_column_letter(16)].width = 1.2   # gap between cal 2 & 3
     ws.column_dimensions[get_column_letter(24)].width = 1.2   # divider
-    for c in range(25, TOTAL_COLS+1): ws.column_dimensions[get_column_letter(c)].width = 4.2
+    for c in range(25, TOTAL_COLS+1): ws.column_dimensions[get_column_letter(c)].width = 5.5
 
     for r in range(1, 55): ws.row_dimensions[r].height = 13
     bg(ws, 1, 1, 55, TOTAL_COLS, CREAM)
