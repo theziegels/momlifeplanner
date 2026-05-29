@@ -162,27 +162,6 @@ def make_cover(wb):
     c.value = "August 2026 – December 2027"
     c.font = mf(10, italic=True, color=TEXT_MED); c.alignment = al("center")
 
-    # ── Three quote boxes
-    ws.row_dimensions[22].height = 16
-    ws.row_dimensions[23].height = 20
-    ws.row_dimensions[24].height = 20
-    ws.row_dimensions[25].height = 16
-
-    quote_boxes = [
-        (2, 7,   "Be present.\nBe patient.\nBe kind to yourself."),
-        (9, 13,  "You are enough\nfor today."),
-        (15, TOTAL_COLS-1, "Small steps\nstill move you\nforward."),
-    ]
-    for c1, c2, quote in quote_boxes:
-        bg(ws, 22, c1, 25, c2, WARM_LIGHT)
-        bdr_range(ws, 22, c1, 25, c2,
-                  bdr(left=sd("thin",WARM_MED), right=sd("thin",WARM_MED),
-                      top=sd("thin",WARM_MED),  bottom=sd("thin",WARM_MED)))
-        cell = mc(ws, 22, c1, 25, c2)
-        cell.value = quote
-        cell.font  = tf(9, italic=True, color=TEXT_MED)
-        cell.alignment = al("center", "center")
-
     # ── Inspirational quote
     ws.row_dimensions[33].height = 18
     ws.row_dimensions[34].height = 18
