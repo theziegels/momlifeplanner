@@ -499,6 +499,17 @@ def make_monthly_layout(wb, year, month):
                     bg(ws, lr, col, lr, col, WARM_LIGHT)
         row += BLOCK
 
+    # ── Bottom Notes section (below calendar, cols 1-7)
+    if row <= 48:
+        ws.row_dimensions[row].height = 16
+        c = mc(ws, row, 1, row, 7)
+        c.value = "Notes"; c.font = mf(8, bold=True, color=ACCENT)
+        c.alignment = L
+        bg(ws, row, 1, row, 7, ACCENT_LIGHT)
+        for nr in range(row+1, 51):
+            ws.row_dimensions[nr].height = 14
+            dot_line(ws, nr, 1, 7)
+
     # Notes sidebar — "Don't Forget" and "Meal Ideas" swapped
     c = mc(ws, 1, 9, 2, 10)
     c.value = "Monthly Notes"; c.font = tf(14, bold=True); c.alignment = L
@@ -889,6 +900,10 @@ def make_bucket_list(wb):
     bg(ws, 1, 1, 4,  TOTAL_COLS, WARM_LIGHT)
 
     for r in range(1, 53): ws.row_dimensions[r].height = 14
+    ws.row_dimensions[1].height = 6
+    ws.row_dimensions[2].height = 26
+    ws.row_dimensions[3].height = 14
+    ws.row_dimensions[4].height = 8
 
     c = mc(ws, 2, 1, 3, TOTAL_COLS)
     c.value = "Bucket List"; c.font = tf(24, bold=True); c.alignment = C
