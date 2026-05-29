@@ -12,12 +12,12 @@ from openpyxl.styles import PatternFill, Font, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
 
 # ── Brand Colors ──────────────────────────────────────────────────────────────
-CREAM        = "FAF7F4"
-WARM_LIGHT   = "F0EAE4"
-WARM_MED     = "E2D5CC"
-WARM_DARK    = "C4B5A8"
+CREAM        = "FDFCFB"
+WARM_LIGHT   = "F6F0EB"
+WARM_MED     = "EAE0D9"
+WARM_DARK    = "CBBFB8"
 ACCENT       = "CE8282"
-ACCENT_LIGHT = "EDD5D5"
+ACCENT_LIGHT = "F4E4E4"
 TEXT_DARK    = "3E342A"
 TEXT_MED     = "7A6B62"
 TEXT_LIGHT   = "A89890"
