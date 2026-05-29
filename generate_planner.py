@@ -134,29 +134,31 @@ def make_cover(wb):
         ws.cell(4, col).border = bdr(bottom=sd("thin", ACCENT))
 
     # ── Title block
-    ws.row_dimensions[9].height  = 18
-    ws.row_dimensions[10].height = 18
-    ws.row_dimensions[12].height = 55
+    # Equal spacing: 10pt gap above and below Mom Life
+    ws.row_dimensions[11].height = 18   # THE ULTIMATE
+    ws.row_dimensions[12].height = 10   # gap above Mom Life
     ws.row_dimensions[13].height = 55
-    ws.row_dimensions[14].height = 18
+    ws.row_dimensions[14].height = 55
+    ws.row_dimensions[15].height = 10   # gap below Mom Life (matches above)
+    ws.row_dimensions[16].height = 18   # PLANNER
 
-    c = mc(ws, 9, 2, 9, TOTAL_COLS-1)
+    c = mc(ws, 11, 2, 11, TOTAL_COLS-1)
     c.value = "THE ULTIMATE"; c.font = tf(13, italic=True, color=TEXT_MED)
     c.alignment = al("center")
 
-    c = mc(ws, 12, 2, 13, TOTAL_COLS-1)
+    c = mc(ws, 13, 2, 14, TOTAL_COLS-1)
     c.value = "Mom Life"; c.font = tf(52, bold=True, color=TEXT_DARK)
     c.alignment = al("center")
 
-    c = mc(ws, 14, 2, 14, TOTAL_COLS-1)
+    c = mc(ws, 16, 2, 16, TOTAL_COLS-1)
     c.value = "P  L  A  N  N  E  R"; c.font = mf(13, color=ACCENT)
     c.alignment = al("center")
 
     # Thin accent rule under title
     for col in range(4, TOTAL_COLS-2):
-        ws.cell(15, col).border = bdr(bottom=sd("thin", ACCENT))
+        ws.cell(17, col).border = bdr(bottom=sd("thin", ACCENT))
 
-    c = mc(ws, 17, 2, 17, TOTAL_COLS-1)
+    c = mc(ws, 19, 2, 19, TOTAL_COLS-1)
     c.value = "August 2026 – December 2027"
     c.font = mf(10, italic=True, color=TEXT_MED); c.alignment = al("center")
 
