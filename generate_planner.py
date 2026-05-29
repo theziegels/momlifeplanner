@@ -67,7 +67,7 @@ def dot_lines(ws, r1, r2, c1, c2, color=WARM_DARK):
     for r in range(r1, r2+1):
         dot_line(ws, r, c1, c2, color)
 
-def landscape_all(ws, scale=80):
+def landscape_all(ws, scale=80, rows=None, cols=None):
     ws.page_setup.orientation = "landscape"
     ws.page_setup.paperSize   = 1
     ws.page_setup.fitToPage   = True
@@ -79,6 +79,8 @@ def landscape_all(ws, scale=80):
     ws.page_margins.right  = 0.35
     ws.page_margins.top    = 0.35
     ws.page_margins.bottom = 0.35
+    if rows and cols:
+        ws.print_area = f"A1:{get_column_letter(cols)}{rows}"
 
 # ── Calendar data ─────────────────────────────────────────────────────────────
 MONTHS_PLANNER = (
@@ -111,9 +113,8 @@ def weeks_of_month(year, month):
 # ══════════════════════════════════════════════════════════════════════════════
 def make_cover(wb):
     ws = wb.create_sheet("Cover")
-    landscape_all(ws)
-
     TOTAL_COLS = 20
+    landscape_all(ws, rows=50, cols=TOTAL_COLS)
     for c in range(1, TOTAL_COLS+1):
         ws.column_dimensions[get_column_letter(c)].width = 6.8
     for r in range(1, 50):
@@ -202,17 +203,11 @@ def make_cover(wb):
 
 
 def _add_branding(ws, r, c1, c2):
-    """Adds two-part brand name: bold-italic Collective title + lighter subtitle."""
-    mid = (c1 + c2) // 2
-    cell_a = mc(ws, r, c1, r, mid)
-    cell_a.value = "Beloved Kingdom Collective™"
-    cell_a.font  = tf(10, bold=True, italic=True, color=TEXT_MED)
-    cell_a.alignment = al("right")
-
-    cell_b = mc(ws, r, mid+1, r, c2)
-    cell_b.value = "  ·  Mom Life Planner"
-    cell_b.font  = mf(9, italic=False, color=TEXT_LIGHT)
-    cell_b.alignment = al("left")
+    """Single merged cell — guaranteed one line."""
+    cell = mc(ws, r, c1, r, c2)
+    cell.value = "Beloved Kingdom Collective™  ·  Mom Life Planner"
+    cell.font  = tf(10, bold=True, italic=True, color=TEXT_MED)
+    cell.alignment = al("center")
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -220,9 +215,8 @@ def _add_branding(ws, r, c1, c2):
 # ══════════════════════════════════════════════════════════════════════════════
 def make_how_to_use(wb):
     ws = wb.create_sheet("How To Use")
-    landscape_all(ws)
-
     TOTAL_COLS = 22
+    landscape_all(ws, rows=56, cols=TOTAL_COLS)
     # Col 1: narrow left margin; col 2: thin accent strip; cols 3+: content
     ws.column_dimensions["A"].width = 1.5
     ws.column_dimensions["B"].width = 2.0   # narrow accent strip
@@ -284,7 +278,7 @@ def make_how_to_use(wb):
 # ══════════════════════════════════════════════════════════════════════════════
 def make_important_contacts(wb):
     ws = wb.create_sheet("Important Contacts")
-    landscape_all(ws)
+    landscape_all(ws, rows=50, cols=22)
 
     # Col A: category label (wide); cols 2-5: Name; 6: gap; 7-10: Phone;
     # 11: gap; 12-16: Email; 17: gap; 18-22: Notes
@@ -334,7 +328,7 @@ def make_important_contacts(wb):
 # ══════════════════════════════════════════════════════════════════════════════
 def make_year_view(wb):
     ws = wb.create_sheet("Year at a Glance")
-    landscape_all(ws, scale=80)
+    landscape_all(ws, scale=80, rows=43, cols=39)
 
     ym_all = (
         [(2026, m) for m in range(7, 13)] +
@@ -422,12 +416,13 @@ def make_year_view(wb):
 # ══════════════════════════════════════════════════════════════════════════════
 def make_monthly_layout(wb, year, month):
     ws = wb.create_sheet(f"{MA[month]} {year}")
-    landscape_all(ws, scale=80)
+    # 7 day cols + divider + 3 notes cols — widened to fill landscape page
+    landscape_all(ws, scale=80, rows=52, cols=10)
 
-    for d in range(1, 8):  ws.column_dimensions[get_column_letter(d)].width = 12.5
+    for d in range(1, 8):  ws.column_dimensions[get_column_letter(d)].width = 14.0
     ws.column_dimensions["H"].width = 0.8
-    ws.column_dimensions["I"].width = 16
-    ws.column_dimensions["J"].width = 16
+    ws.column_dimensions["I"].width = 17
+    ws.column_dimensions["J"].width = 17
 
     LINES = 5; BLOCK = 1 + LINES
 
@@ -479,13 +474,13 @@ def make_monthly_layout(wb, year, month):
                     bg(ws, lr, col, lr, col, WARM_LIGHT)
         row += BLOCK
 
-    # Notes sidebar
+    # Notes sidebar — "Don't Forget" and "Meal Ideas" swapped
     c = mc(ws, 1, 9, 2, 10)
     c.value = "Monthly Notes"; c.font = tf(14, bold=True); c.alignment = L
     bg(ws, 1, 9, 4, 10, WARM_LIGHT)
 
     note_secs = [(6,"Appointments"),(14,"Birthdays & Occasions"),
-                 (22,"Meal Ideas"),(30,"Don't Forget")]
+                 (22,"Don't Forget"),(30,"Meal Ideas")]
     for sr, slbl in note_secs:
         c = mc(ws, sr, 9, sr, 10)
         c.value = slbl; c.font = mf(8, bold=True, color=ACCENT); c.alignment = L
@@ -504,7 +499,7 @@ def make_weekly_layout(wb, week_dates, month_name, year):
     start_d = week_dates[0]
     end_d   = week_dates[6]
     ws = wb.create_sheet(f"Wk {start_d.strftime('%b %-d')}")
-    landscape_all(ws, scale=80)
+    landscape_all(ws, scale=80, rows=57, cols=26)
 
     # ── Columns ───────────────────────────────────────────────────────────────
     for c in list(range(1,7)) + list(range(8,14)):
@@ -655,8 +650,8 @@ GOAL_TITLES = {
 
 def make_goals_page(wb, goal_type):
     ws = wb.create_sheet(f"{goal_type} Goals")
-    landscape_all(ws)
     TOTAL_COLS = 22
+    landscape_all(ws, rows=55, cols=TOTAL_COLS)
     for c in range(1, TOTAL_COLS+1):
         ws.column_dimensions[get_column_letter(c)].width = 6.0
     for r in range(1, 55): ws.row_dimensions[r].height = 14
@@ -718,8 +713,8 @@ def make_goals_page(wb, goal_type):
 # ══════════════════════════════════════════════════════════════════════════════
 def make_brain_map(wb):
     ws = wb.create_sheet("Brain Map")
-    landscape_all(ws)
     TOTAL_COLS = 28
+    landscape_all(ws, rows=50, cols=TOTAL_COLS)
     for c in range(1, TOTAL_COLS+1):
         ws.column_dimensions[get_column_letter(c)].width = 4.5
     for r in range(1, 50): ws.row_dimensions[r].height = 13
@@ -761,8 +756,8 @@ def make_brain_map(wb):
 # ══════════════════════════════════════════════════════════════════════════════
 def make_brainstorm(wb):
     ws = wb.create_sheet("Brainstorm")
-    landscape_all(ws)
     TOTAL_COLS = 28
+    landscape_all(ws, rows=50, cols=TOTAL_COLS)
     for c in range(1, TOTAL_COLS+1):
         ws.column_dimensions[get_column_letter(c)].width = 4.5
     for r in range(1, 50): ws.row_dimensions[r].height = 13
@@ -805,8 +800,8 @@ def make_brainstorm(wb):
 # ══════════════════════════════════════════════════════════════════════════════
 def make_vision_board(wb):
     ws = wb.create_sheet("Vision Board")
-    landscape_all(ws)
     TOTAL_COLS = 22
+    landscape_all(ws, rows=50, cols=TOTAL_COLS)
     for c in range(1, TOTAL_COLS+1):
         ws.column_dimensions[get_column_letter(c)].width = 6.2
     for r in range(1, 50): ws.row_dimensions[r].height = 13
@@ -851,8 +846,8 @@ def make_vision_board(wb):
 # ══════════════════════════════════════════════════════════════════════════════
 def make_bucket_list(wb):
     ws = wb.create_sheet("Bucket List")
-    landscape_all(ws)
     TOTAL_COLS = 22
+    landscape_all(ws, rows=52, cols=TOTAL_COLS)
     for c in range(1, TOTAL_COLS+1):
         ws.column_dimensions[get_column_letter(c)].width = 6.3
     bg(ws, 1, 1, 55, TOTAL_COLS, CREAM)
@@ -896,7 +891,7 @@ def make_bucket_list(wb):
 # ══════════════════════════════════════════════════════════════════════════════
 def make_self_care_tracker(wb):
     ws = wb.create_sheet("Self-Care Tracker")
-    landscape_all(ws, scale=80)
+    landscape_all(ws, scale=80, rows=36, cols=33)
 
     # Wide habit name col + 31 day cols + notes col
     ws.column_dimensions["A"].width = 22
@@ -969,27 +964,142 @@ def make_self_care_tracker(wb):
 
 
 # ══════════════════════════════════════════════════════════════════════════════
+# MONTHLY HABIT TRACKER  –  one per month, inserted after monthly layout
+# ══════════════════════════════════════════════════════════════════════════════
+def make_monthly_habit_tracker(wb, year, month):
+    days_in_month = calendar.monthrange(year, month)[1]
+    ws = wb.create_sheet(f"Habits {MA[month]} {year}")
+
+    # cols: A=habit name, B...(days+1)=day circles, last=notes
+    TOTAL_COLS = 1 + days_in_month + 1
+    landscape_all(ws, scale=80, rows=40, cols=TOTAL_COLS)
+
+    ws.column_dimensions["A"].width = 22
+    for c in range(2, days_in_month+2):
+        ws.column_dimensions[get_column_letter(c)].width = 3.4
+    ws.column_dimensions[get_column_letter(TOTAL_COLS)].width = 12
+
+    for r in range(1, 41): ws.row_dimensions[r].height = 14
+    bg(ws, 1, 1, 40, TOTAL_COLS, CREAM)
+
+    # ── Header
+    bg(ws, 1, 1, 4, TOTAL_COLS, WARM_LIGHT)
+    ws.row_dimensions[1].height = 8
+    ws.row_dimensions[2].height = 22
+    ws.row_dimensions[3].height = 14
+    ws.row_dimensions[4].height = 8
+
+    c = mc(ws, 2, 1, 2, TOTAL_COLS)
+    c.value = f"{MN[month]} {year}"
+    c.font  = tf(20, bold=True); c.alignment = C
+
+    c = mc(ws, 3, 1, 3, TOTAL_COLS)
+    c.value = "Habit Tracker"
+    c.font  = mf(9, italic=True, color=TEXT_MED); c.alignment = C
+
+    # ── Column headers: day numbers
+    ws.row_dimensions[6].height = 14
+    ws.cell(6, 1).value = "Habit"
+    ws.cell(6, 1).font  = mf(8, bold=True, color=TEXT_MED)
+    for d in range(1, days_in_month+1):
+        cell = ws.cell(6, d+1)
+        cell.value = d
+        cell.font  = mf(7, bold=True, color=TEXT_MED)
+        cell.alignment = al("center")
+    ws.cell(6, TOTAL_COLS).value = "Notes"
+    ws.cell(6, TOTAL_COLS).font  = mf(8, bold=True, color=TEXT_MED)
+    bg(ws, 6, 1, 6, TOTAL_COLS, WARM_LIGHT)
+
+    # ── Habit rows
+    pre_filled = [
+        "Quiet time / prayer",
+        "Time in the Bible",
+        "Drink enough water",
+        "Healthy food choices",
+        "Intentional time with each child",
+        "Move my body",
+        "Good night's sleep",
+    ]
+    all_habits = pre_filled + [""] * 5  # 12 total
+
+    LAST_HABIT_ROW = 0
+    for i, habit in enumerate(all_habits):
+        r = 8 + i * 2
+        ws.row_dimensions[r].height = 18
+        LAST_HABIT_ROW = r
+
+        # Habit name cell — bg only on this row (not below)
+        ws.cell(r, 1).value = habit if habit else "________________"
+        ws.cell(r, 1).font  = (mf(8, color=TEXT_DARK) if habit
+                                else mf(8, color=WARM_DARK))
+        bg(ws, r, 1, r, 1, WARM_LIGHT)
+
+        for d in range(1, days_in_month+1):
+            cell = ws.cell(r, d+1)
+            cell.value = "○"
+            cell.font  = Font(name="Montserrat", size=7, color=WARM_DARK)
+            cell.alignment = al("center")
+            cell.border = bdr(left=sd("hair", WARM_MED),
+                              bottom=sd("dotted", WARM_DARK))
+        ws.cell(r, TOTAL_COLS).border = bdr(bottom=sd("dotted", WARM_DARK))
+        ws.row_dimensions[r+1].height = 3
+
+    # ── Notes (left) + Gratitude (right) sections below habits
+    SEC_START = LAST_HABIT_ROW + 3
+    MID_COL   = TOTAL_COLS // 2
+
+    # Notes header
+    ws.row_dimensions[SEC_START].height = 16
+    c = mc(ws, SEC_START, 1, SEC_START, MID_COL)
+    c.value = "Notes"; c.font = mf(8, bold=True, color=TEXT_MED)
+    c.alignment = L
+    bg(ws, SEC_START, 1, SEC_START, MID_COL, WARM_LIGHT)
+
+    # Gratitude header
+    c = mc(ws, SEC_START, MID_COL+1, SEC_START, TOTAL_COLS)
+    c.value = "Gratitude"; c.font = mf(8, bold=True, color=ACCENT)
+    c.alignment = L
+    bg(ws, SEC_START, MID_COL+1, SEC_START, TOTAL_COLS, ACCENT_LIGHT)
+
+    # Ruled lines for both sections down to row 39
+    for lr in range(SEC_START+1, 40):
+        ws.row_dimensions[lr].height = 14
+        dot_line(ws, lr, 1,          MID_COL)
+        dot_line(ws, lr, MID_COL+1,  TOTAL_COLS)
+
+    return ws
+
+
+# ══════════════════════════════════════════════════════════════════════════════
 # NEXT YEAR GOALS & CONSIDERATIONS  (last tab)
 # ══════════════════════════════════════════════════════════════════════════════
 def make_next_year_page(wb):
     ws = wb.create_sheet("Looking Ahead · 2028")
-    landscape_all(ws, scale=80)
 
-    TOTAL_COLS = 30
+    # Layout: 3 mini-cals per row × 4 rows = 12 months
+    # Each mini-cal: 7 day cols (S M T W T F S) + 1 gap col = 8 units
+    # 3 cals = 3×7 + 2 gaps = 23 cal cols (1-23)
+    # col 24: divider strip
+    # cols 25-42: goals/notes section (18 cols)
+    TOTAL_COLS = 42
+    landscape_all(ws, scale=80, rows=54, cols=TOTAL_COLS)
 
-    # Left section (cols 1-18): 2028 mini calendar preview
-    # Right section (cols 20-30): goals + notes
-    for c in range(1, TOTAL_COLS+1):
-        ws.column_dimensions[get_column_letter(c)].width = 4.5
-    ws.column_dimensions[get_column_letter(19)].width = 1.5  # divider
+    # Column widths
+    for c in range(1, 24):       ws.column_dimensions[get_column_letter(c)].width = 3.8
+    ws.column_dimensions[get_column_letter(8)].width  = 1.2   # gap between cal 1 & 2
+    ws.column_dimensions[get_column_letter(16)].width = 1.2   # gap between cal 2 & 3
+    ws.column_dimensions[get_column_letter(24)].width = 1.2   # divider
+    for c in range(25, TOTAL_COLS+1): ws.column_dimensions[get_column_letter(c)].width = 4.2
 
     for r in range(1, 55): ws.row_dimensions[r].height = 13
     bg(ws, 1, 1, 55, TOTAL_COLS, CREAM)
     bg(ws, 1, 1, 4,  TOTAL_COLS, WARM_LIGHT)
 
     # ── Title
-    ws.row_dimensions[2].height = 24
+    ws.row_dimensions[1].height = 6
+    ws.row_dimensions[2].height = 26
     ws.row_dimensions[3].height = 14
+    ws.row_dimensions[4].height = 8
     c = mc(ws, 2, 1, 2, TOTAL_COLS)
     c.value = "Looking Ahead · 2028"; c.font = tf(26, bold=True); c.alignment = C
 
@@ -1000,82 +1110,72 @@ def make_next_year_page(wb):
     for col in range(1, TOTAL_COLS+1):
         ws.cell(4, col).border = bdr(bottom=sd("medium", ACCENT))
 
-    # ── Left: 2028 year calendar (4 cols × 3 rows = 12 months)
-    # Mini-cal layout: 4 months per row, 3 rows
-    # Each mini-cal: 7 day-cols + 1 gap = 8 col units; 4 minis × but we have 18 cols
-    # Use 4 cols wide per mini-cal: month name (merged 4) + 4 day cols (S-S abbreviated 2-per-col)
-    # Simpler: use 3 cals per row × 2 rows = 6 cols done differently
-    # Let's do 3 per row × 4 rows = 12 months using cols 1-18, 6 cols per mini-cal
-
-    CAL_W  = 4   # cols per mini-calendar
-    GAP_C  = 1   # gap col between cals per row
-    CALS_PER_ROW = 4
-    # col starts for 4 minis: 1, 6, 11, 16
-    cal_col_starts = [1, 1+(CAL_W+GAP_C), 1+2*(CAL_W+GAP_C), 1+3*(CAL_W+GAP_C)]
-    # = 1, 6, 11, 16
-
-    ROWS_PER_CAL = 9  # name + day-hdr + 6 weeks + gap
-    cal_row_starts = [6, 6+ROWS_PER_CAL, 6+2*ROWS_PER_CAL]  # 3 rows × 4 cols = 12 months
+    # ── 3×4 mini-calendar grid (3 months across, 4 rows)
+    # cal starts: col 1, 9, 17 (each 7 wide, gaps at 8, 16)
+    CAL_W = 7
+    cal_col_starts = [1, 9, 17]
+    ROWS_PER_CAL = 10  # month name + day hdr + up to 6 weeks + 1 gap row
+    cal_row_starts = [5, 5+ROWS_PER_CAL, 5+2*ROWS_PER_CAL, 5+3*ROWS_PER_CAL]
 
     for mi, mo in enumerate(range(1, 13)):
-        grow = mi // CALS_PER_ROW
-        gcol = mi  % CALS_PER_ROW
+        grow = mi // 3
+        gcol = mi  % 3
         cr   = cal_row_starts[grow]
         cc   = cal_col_starts[gcol]
 
-        # Month name
-        ws.row_dimensions[cr].height = 14
+        # Month name header
+        ws.row_dimensions[cr].height = 15
         c = mc(ws, cr, cc, cr, cc+CAL_W-1)
-        c.value = MA[mo]; c.font = tf(8, bold=True, color=TEXT_MED)
+        c.value = MN[mo]; c.font = tf(9, bold=True, color=TEXT_DARK)
         c.alignment = al("center")
         bg(ws, cr, cc, cr, cc+CAL_W-1, WARM_LIGHT)
 
-        # Day letters (S M T W T F S) compressed into 4 cols — use first letter only
+        # Day-of-week header (S M T W T F S)
         ws.row_dimensions[cr+1].height = 10
         for d, ltr in enumerate(["S","M","T","W","T","F","S"]):
-            col_offset = d % CAL_W
-            cell = ws.cell(cr+1, cc+col_offset)
-            # We'll just show dates — skip full day header in 4-col layout
+            cell = ws.cell(cr+1, cc+d)
+            cell.value = ltr
+            cell.font  = mf(6, bold=True, color=TEXT_MED)
+            cell.alignment = al("center")
 
-        # Dates (Sun-first, compressed)
+        # Date numbers (Sunday-first)
         for wi, week in enumerate(calendar.monthcalendar(2028, mo)):
             sun = week[6]; row_days = [sun] + week[:6]
             ws.row_dimensions[cr+2+wi].height = 11
             for d, day_num in enumerate(row_days):
                 if day_num:
-                    col_pos = cc + (d % CAL_W)
-                    cell = ws.cell(cr+2+wi, col_pos)
-                    if not cell.value:
-                        cell.value = day_num
-                    cell.font  = mf(6, color=TEXT_MED)
+                    cell = ws.cell(cr+2+wi, cc+d)
+                    cell.value = day_num
+                    cell.font  = mf(7, color=TEXT_MED)
                     cell.alignment = al("center")
 
     # ── Divider strip
-    bg(ws, 5, 19, 55, 19, WARM_MED)
+    bg(ws, 5, 24, 50, 24, WARM_MED)
 
-    # ── Right: Goals + Notes (cols 20-30)
-    RS = 20  # right start col
-    RE = TOTAL_COLS  # right end col
+    # ── Right: Goals + Notes (cols 25-42)
+    RS = 25
+    RE = TOTAL_COLS
 
     sections = [
-        (6,  "Goals for 2028",           16),
-        (18, "Intentions & Hopes",       28),
-        (30, "Word(s) for the Year",     36),
-        (38, "Things to Start / Stop",   48),
+        (5,  "Goals for 2028",          13),
+        (14, "Intentions & Hopes",      24),
+        (25, "Word(s) for the Year",    33),
+        (34, "Things to Start / Stop",  44),
     ]
     for sr, slbl, er in sections:
         ws.row_dimensions[sr].height = 20
         c = mc(ws, sr, RS, sr, RE)
         c.value = slbl; c.font = tf(11, bold=True, color=ACCENT); c.alignment = L
         bg(ws, sr, RS, sr, RE, ACCENT_LIGHT)
-        for lr in range(sr+2, er):
+        for lr in range(sr+2, min(er, 51)):
             ws.row_dimensions[lr].height = 16
             dot_line(ws, lr, RS, RE)
 
     # ── Branding at bottom
-    ws.row_dimensions[51].height = 18
-    ws.row_dimensions[52].height = 16
-    _add_branding(ws, 51, 2, TOTAL_COLS-1)
+    ws.row_dimensions[51].height = 6
+    ws.row_dimensions[52].height = 18
+    ws.row_dimensions[53].height = 8
+    _add_branding(ws, 52, 2, TOTAL_COLS-1)
 
     return ws
 
@@ -1109,6 +1209,7 @@ def build_planner():
     for (year, month) in MONTHS_PLANNER:
         print(f"  {MN[month]} {year}")
         make_monthly_layout(wb, year, month)
+        make_monthly_habit_tracker(wb, year, month)
         for week in weeks_of_month(year, month):
             make_weekly_layout(wb, week, MN[month], year)
 
