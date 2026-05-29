@@ -1022,7 +1022,7 @@ def make_monthly_habit_tracker(wb, year, month):
 
     # cols: A=habit name, B...(days+1)=day circles, last=notes
     TOTAL_COLS = 1 + days_in_month + 1
-    landscape_all(ws, scale=80, rows=40, cols=TOTAL_COLS)
+    landscape_all(ws, scale=80, rows=52, cols=TOTAL_COLS)
 
     # Dynamic day-col width so all months print at identical scale
     A_W, NOTES_W = 22, 12
@@ -1032,8 +1032,8 @@ def make_monthly_habit_tracker(wb, year, month):
         ws.column_dimensions[get_column_letter(c)].width = day_w
     ws.column_dimensions[get_column_letter(TOTAL_COLS)].width = NOTES_W
 
-    for r in range(1, 41): ws.row_dimensions[r].height = 14
-    bg(ws, 1, 1, 40, TOTAL_COLS, CREAM)
+    for r in range(1, 53): ws.row_dimensions[r].height = 14
+    bg(ws, 1, 1, 52, TOTAL_COLS, CREAM)
 
     # ── Header
     bg(ws, 1, 1, 4, TOTAL_COLS, WARM_LIGHT)
@@ -1081,24 +1081,28 @@ def make_monthly_habit_tracker(wb, year, month):
         ws.row_dimensions[r].height = 18
         LAST_HABIT_ROW = r
 
-        # Habit name cell — bg only on this row (not below)
-        ws.cell(r, 1).value = habit if habit else "________________"
-        ws.cell(r, 1).font  = (mf(8, color=TEXT_DARK) if habit
-                                else mf(8, color=WARM_DARK))
-        bg(ws, r, 1, r, 1, WARM_LIGHT)
+        if habit:
+            # Filled habit: name + circles + dotted borders
+            ws.cell(r, 1).value = habit
+            ws.cell(r, 1).font  = mf(8, color=TEXT_DARK)
+            bg(ws, r, 1, r, 1, WARM_LIGHT)
+            for d in range(1, days_in_month+1):
+                cell = ws.cell(r, d+1)
+                cell.value = "○"
+                cell.font  = Font(name="Montserrat", size=7, color=WARM_DARK)
+                cell.alignment = al("center")
+                cell.border = bdr(left=sd("hair", WARM_MED),
+                                  bottom=sd("dotted", WARM_DARK))
+            ws.cell(r, TOTAL_COLS).border = bdr(bottom=sd("dotted", WARM_DARK))
+        else:
+            # Blank row: solid colored block, no circles or lines — visual cue to add habits
+            bg(ws, r, 1, r, TOTAL_COLS, WARM_LIGHT)
 
-        for d in range(1, days_in_month+1):
-            cell = ws.cell(r, d+1)
-            cell.value = "○"
-            cell.font  = Font(name="Montserrat", size=7, color=WARM_DARK)
-            cell.alignment = al("center")
-            cell.border = bdr(left=sd("hair", WARM_MED),
-                              bottom=sd("dotted", WARM_DARK))
-        ws.cell(r, TOTAL_COLS).border = bdr(bottom=sd("dotted", WARM_DARK))
         ws.row_dimensions[r+1].height = 3
 
     # ── Notes (left) + Gratitude (right) sections below habits
     SEC_START = LAST_HABIT_ROW + 3
+    SEC_END   = 50
     MID_COL   = TOTAL_COLS // 2
 
     # Notes header
@@ -1112,13 +1116,42 @@ def make_monthly_habit_tracker(wb, year, month):
     c = mc(ws, SEC_START, MID_COL+1, SEC_START, TOTAL_COLS)
     c.value = "Gratitude"; c.font = mf(8, bold=True, color=ACCENT)
     c.alignment = L
-    bg(ws, SEC_START, MID_COL+1, SEC_START, TOTAL_COLS, ACCENT_LIGHT)
+    bg(ws, SEC_START, MID_COL+1, SEC_START, TOTAL_COLS, WARM_LIGHT)
 
-    # Ruled lines for both sections down to row 39
-    for lr in range(SEC_START+1, 40):
+    # Ruled lines for both sections
+    for lr in range(SEC_START+1, SEC_END+1):
         ws.row_dimensions[lr].height = 14
         dot_line(ws, lr, 1,          MID_COL)
         dot_line(ws, lr, MID_COL+1,  TOTAL_COLS)
+
+    # Box borders around each section
+    b_top    = sd("thin", WARM_MED)
+    b_side   = sd("thin", WARM_MED)
+    b_bottom = sd("thin", WARM_MED)
+    for row in range(SEC_START, SEC_END+1):
+        ws.cell(row, 1).border          = bdr(left=b_side,
+            top=b_top if row==SEC_START else None,
+            bottom=b_bottom if row==SEC_END else None)
+        ws.cell(row, MID_COL).border    = bdr(right=b_side,
+            top=b_top if row==SEC_START else None,
+            bottom=b_bottom if row==SEC_END else None)
+        ws.cell(row, MID_COL+1).border  = bdr(left=b_side,
+            top=b_top if row==SEC_START else None,
+            bottom=b_bottom if row==SEC_END else None)
+        ws.cell(row, TOTAL_COLS).border = bdr(right=b_side,
+            top=b_top if row==SEC_START else None,
+            bottom=b_bottom if row==SEC_END else None)
+    # Top and bottom full-width lines
+    for c2 in range(1, MID_COL+1):
+        ws.cell(SEC_START, c2).border   = bdr(top=b_top,
+            left=b_side if c2==1 else None, right=b_side if c2==MID_COL else None)
+        ws.cell(SEC_END,   c2).border   = bdr(bottom=b_bottom,
+            left=b_side if c2==1 else None, right=b_side if c2==MID_COL else None)
+    for c2 in range(MID_COL+1, TOTAL_COLS+1):
+        ws.cell(SEC_START, c2).border   = bdr(top=b_top,
+            left=b_side if c2==MID_COL+1 else None, right=b_side if c2==TOTAL_COLS else None)
+        ws.cell(SEC_END,   c2).border   = bdr(bottom=b_bottom,
+            left=b_side if c2==MID_COL+1 else None, right=b_side if c2==TOTAL_COLS else None)
 
     return ws
 
