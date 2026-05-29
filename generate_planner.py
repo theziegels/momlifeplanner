@@ -1339,18 +1339,17 @@ def make_season_tab(wb, season, year):
     DIV_COL  = 21
     RIGHT_START = 22
 
-    # Left header
+    # Left header — bg covers through divider col to close the gap
     ws.row_dimensions[5].height = 18
+    bg(ws, 5, 1, 5, TOTAL_COLS, WARM_LIGHT)   # full-width base first
     c = mc(ws, 5, 1, 5, LEFT_END)
     c.value = "Cleaning & Declutter"
-    c.font = tf(11, bold=True, color=ACCENT); c.alignment = al("center")
-    bg(ws, 5, 1, 5, LEFT_END, ACCENT_LIGHT)
+    c.font = tf(11, bold=True, color=TEXT_MED); c.alignment = al("center")
 
     # Right header
     c = mc(ws, 5, RIGHT_START, 5, TOTAL_COLS)
     c.value = "Home Maintenance"
     c.font = tf(11, bold=True, color=TEXT_MED); c.alignment = al("center")
-    bg(ws, 5, RIGHT_START, 5, TOTAL_COLS, WARM_LIGHT)
 
     # Thin divider line (no filled column)
     for dr in range(5, 33):
@@ -1401,7 +1400,7 @@ def make_season_tab(wb, season, year):
         c = mc(ws, 33, sc, 33, ec)
         c.value = title; c.font = mf(8, bold=True, color=ACCENT if i == 0 else TEXT_MED)
         c.alignment = al("center")
-        bg(ws, 33, sc, 33, ec, ACCENT_LIGHT if i == 0 else WARM_LIGHT)
+        bg(ws, 33, sc, 33, ec, WARM_LIGHT)
         for wr in range(34, 54):
             ws.row_dimensions[wr].height = 14
             dot_line(ws, wr, sc, ec)
