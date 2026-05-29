@@ -94,6 +94,34 @@ MA = ["","Jan","Feb","Mar","Apr","May","Jun",
       "Jul","Aug","Sep","Oct","Nov","Dec"]
 DF = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
 
+HOLIDAYS = {
+    (2026,  1,  1): "New Year's Day",
+    (2026,  4,  3): "Good Friday",
+    (2026,  4,  5): "Easter",
+    (2026,  5, 10): "Mother's Day",
+    (2026,  5, 25): "Memorial Day",
+    (2026,  6, 21): "Father's Day",
+    (2026,  7,  4): "Independence Day",
+    (2026,  9,  7): "Labor Day",
+    (2026, 11, 26): "Thanksgiving",
+    (2026, 12, 24): "Christmas Eve",
+    (2026, 12, 25): "Christmas Day",
+    (2026, 12, 31): "New Year's Eve",
+    (2027,  1,  1): "New Year's Day",
+    (2027,  3, 26): "Good Friday",
+    (2027,  3, 28): "Easter",
+    (2027,  5,  9): "Mother's Day",
+    (2027,  5, 31): "Memorial Day",
+    (2027,  6, 20): "Father's Day",
+    (2027,  7,  4): "Independence Day",
+    (2027,  9,  6): "Labor Day",
+    (2027, 11, 25): "Thanksgiving",
+    (2027, 12, 24): "Christmas Eve",
+    (2027, 12, 25): "Christmas Day",
+    (2027, 12, 31): "New Year's Eve",
+    (2028,  1,  1): "New Year's Day",
+}
+
 def weeks_of_month(year, month):
     """Only weeks whose Monday falls within the month — eliminates duplicates."""
     first = date(year, month, 1)
@@ -116,7 +144,7 @@ def make_cover(wb):
     TOTAL_COLS = 20
     landscape_all(ws, rows=50, cols=TOTAL_COLS)
     for c in range(1, TOTAL_COLS+1):
-        ws.column_dimensions[get_column_letter(c)].width = 9.5
+        ws.column_dimensions[get_column_letter(c)].width = 10.2
     for r in range(1, 50):
         ws.row_dimensions[r].height = 14
 
@@ -136,10 +164,10 @@ def make_cover(wb):
     # ── Title block
     # Equal spacing: 10pt gap above and below Mom Life
     ws.row_dimensions[11].height = 18   # THE ULTIMATE
-    ws.row_dimensions[12].height = 10   # gap above Mom Life
+    ws.row_dimensions[12].height = 4   # gap above Mom Life
     ws.row_dimensions[13].height = 55
     ws.row_dimensions[14].height = 55
-    ws.row_dimensions[15].height = 10   # gap below Mom Life (matches above)
+    ws.row_dimensions[15].height = 4   # gap below Mom Life (matches above)
     ws.row_dimensions[16].height = 18   # PLANNER
 
     c = mc(ws, 11, 2, 11, TOTAL_COLS-1)
@@ -157,6 +185,7 @@ def make_cover(wb):
     # Thin accent rule under title
     for col in range(4, TOTAL_COLS-2):
         ws.cell(17, col).border = bdr(bottom=sd("thin", ACCENT))
+    ws.row_dimensions[17].height = 24
 
     c = mc(ws, 19, 2, 19, TOTAL_COLS-1)
     c.value = "August 2026 – December 2027"
@@ -166,13 +195,13 @@ def make_cover(wb):
     ws.row_dimensions[33].height = 18
     ws.row_dimensions[34].height = 18
     c = mc(ws, 33, 3, 34, TOTAL_COLS-2)
-    c.value = '"You are doing better than you think."'
+    c.value = '"You are worried and distracted by many things —\nthere is need of only one thing."  — Luke 10:41–42'
     c.font  = tf(14, italic=True, color=TEXT_MED); c.alignment = al("center")
 
     # ── Tagline
     ws.row_dimensions[40].height = 16
     c = mc(ws, 40, 2, 40, TOTAL_COLS-1)
-    c.value = "plan  ·  dream  ·  thrive"
+    c.value = "plan  ·  dream  ·  do  ·  thrive"
     c.font  = mf(9, italic=True, color=TEXT_LIGHT); c.alignment = al("center")
 
     # ── Branding
@@ -200,9 +229,9 @@ def make_how_to_use(wb):
     landscape_all(ws, rows=56, cols=TOTAL_COLS)
     # Col 1: narrow left margin; col 2: thin accent strip; cols 3+: content
     ws.column_dimensions["A"].width = 1.5
-    ws.column_dimensions["B"].width = 2.0   # narrow accent strip
+    ws.column_dimensions["B"].width = 1.0   # narrow accent strip
     for c in range(3, TOTAL_COLS+1):
-        ws.column_dimensions[get_column_letter(c)].width = 7.8
+        ws.column_dimensions[get_column_letter(c)].width = 10.0
 
     for r in range(1, 56): ws.row_dimensions[r].height = 14
     bg(ws, 1, 1, 56, TOTAL_COLS, CREAM)
@@ -228,13 +257,13 @@ def make_how_to_use(wb):
              "Brain Map: central idea branching outward in all directions. "
              "Brainstorm: spine-and-branch layout for free-flow thinking."),
         (36, "Vision Board + Extras",
-             "Vision Board, Bucket List, Self-Care Tracker, and Important Contacts — "
+             "Vision Board, Bucket List, and Important Contacts — "
              "because a well-planned life is a well-lived life."),
     ]
 
     for row, title, body in items:
         # Accent strip spans title row AND all body rows (row to row+4)
-        bg(ws, row, 2, row+4, 2, ACCENT)
+        bg(ws, row, 2, row+3, 2, ACCENT)
         ws.row_dimensions[row].height   = 20
         ws.row_dimensions[row+1].height = 14
         ws.row_dimensions[row+2].height = 14
@@ -259,21 +288,21 @@ def make_how_to_use(wb):
 # ══════════════════════════════════════════════════════════════════════════════
 def make_important_contacts(wb):
     ws = wb.create_sheet("Important Contacts")
-    landscape_all(ws, rows=50, cols=22)
+    landscape_all(ws, rows=54, cols=22)
 
     # Col A: category label (wide); cols 2-5: Name; 6: gap; 7-10: Phone;
     # 11: gap; 12-16: Email; 17: gap; 18-22: Notes
-    ws.column_dimensions["A"].width = 20    # category label — wide enough for full name
-    for c in range(2, 6):   ws.column_dimensions[get_column_letter(c)].width = 8   # Name
-    ws.column_dimensions["F"].width = 1.5   # gap
-    for c in range(7, 11):  ws.column_dimensions[get_column_letter(c)].width = 8   # Phone
-    ws.column_dimensions["K"].width = 1.5   # gap
-    for c in range(12, 17): ws.column_dimensions[get_column_letter(c)].width = 7   # Email
-    ws.column_dimensions["Q"].width = 2.0   # gap — clear separation before Notes
-    for c in range(18, 23): ws.column_dimensions[get_column_letter(c)].width = 8   # Notes
+    ws.column_dimensions["A"].width = 24
+    for c in range(2, 6):   ws.column_dimensions[get_column_letter(c)].width = 10
+    ws.column_dimensions["F"].width = 2.0
+    for c in range(7, 11):  ws.column_dimensions[get_column_letter(c)].width = 10
+    ws.column_dimensions["K"].width = 2.0
+    for c in range(12, 17): ws.column_dimensions[get_column_letter(c)].width = 8.5
+    ws.column_dimensions["Q"].width = 2.5
+    for c in range(18, 23): ws.column_dimensions[get_column_letter(c)].width = 10
 
-    for r in range(1, 50): ws.row_dimensions[r].height = 14
-    bg(ws, 1, 1, 50, 22, CREAM)
+    for r in range(1, 55): ws.row_dimensions[r].height = 14
+    bg(ws, 1, 1, 54, 22, CREAM)
     bg(ws, 1, 1, 4,  22, WARM_LIGHT)
 
     c = mc(ws, 2, 1, 3, 22)
@@ -302,6 +331,12 @@ def make_important_contacts(wb):
             cell.border = bdr(bottom=sd("dotted", WARM_DARK))
         dot_line(ws, r+1, 2, 22)
         r += 2
+
+    # blank write-in rows
+    for wr in range(r, r+12):
+        ws.row_dimensions[wr].height = 20
+        dot_line(ws, wr, 1, 22)
+
     return ws
 
 
@@ -310,7 +345,7 @@ def make_important_contacts(wb):
 # ══════════════════════════════════════════════════════════════════════════════
 def make_year_view(wb):
     ws = wb.create_sheet("Year at a Glance")
-    landscape_all(ws, scale=80, rows=43, cols=39)
+    landscape_all(ws, scale=80, rows=41, cols=39)
 
     ym_all = (
         [(2026, m) for m in range(7, 13)] +
@@ -335,11 +370,11 @@ def make_year_view(wb):
     for r in range(1, 44): ws.row_dimensions[r].height = 13
     ws.row_dimensions[1].height = 22
     ws.row_dimensions[2].height = 14
-    ws.row_dimensions[3].height = 6
+    ws.row_dimensions[3].height = 14
     for g in range(4):
-        ws.row_dimensions[3 + (g+1)*ROWS_PER].height = 5
+        ws.row_dimensions[3 + (g+1)*ROWS_PER].height = 10
 
-    bg(ws, 1, 1, 43, 39, CREAM)
+    bg(ws, 1, 1, 41, 39, CREAM)
     bg(ws, 1, 1, 2,  39, WARM_LIGHT)
 
     c = mc(ws, 1, 1, 1, 39)
@@ -403,8 +438,8 @@ def make_monthly_layout(wb, year, month):
 
     for d in range(1, 8):  ws.column_dimensions[get_column_letter(d)].width = 17.0
     ws.column_dimensions["H"].width = 0.8
-    ws.column_dimensions["I"].width = 22
-    ws.column_dimensions["J"].width = 22
+    ws.column_dimensions["I"].width = 26
+    ws.column_dimensions["J"].width = 26
 
     LINES = 5; BLOCK = 1 + LINES
 
@@ -451,6 +486,12 @@ def make_monthly_layout(wb, year, month):
                     ws.row_dimensions[row+ln].height = 12
                     ws.cell(row+ln, col).border = bdr(bottom=sd("dotted",WARM_DARK),
                                                        left=sd("hair",WARM_MED))
+                hkey = (year, month, day_num)
+                if hkey in HOLIDAYS and LINES >= 1:
+                    hcell = ws.cell(row+1, col)
+                    hcell.value = HOLIDAYS[hkey]
+                    hcell.font  = mf(6, italic=True, color=TEXT_LIGHT)
+                    hcell.alignment = al("center", "center")
             else:
                 for lr in range(row, row+BLOCK):
                     bg(ws, lr, col, lr, col, WARM_LIGHT)
@@ -504,7 +545,7 @@ def make_weekly_layout(wb, week_dates, month_name, year):
     for r in range(1, 58): ws.row_dimensions[r].height = LINE_H
     ws.row_dimensions[1].height = 20
     ws.row_dimensions[2].height = 14
-    ws.row_dimensions[3].height = 7
+    ws.row_dimensions[3].height = 16
 
     pair_starts = [4, 4 + PAIR_BLOCK, 4 + PAIR_BLOCK*2]
     sun_start   = 4 + PAIR_BLOCK*3
@@ -551,9 +592,15 @@ def make_weekly_layout(wb, week_dates, month_name, year):
         ws.cell(rs, c_start).alignment = al("left", "center")
 
         cell = mc(ws, rs, c_start+1, rs, c_end)
-        cell.value = DF[day_idx].upper()
-        cell.font  = mf(7, color=TEXT_MED)
-        cell.alignment = al("left", "center")
+        hkey = (week_dates[day_idx].year, week_dates[day_idx].month, week_dates[day_idx].day)
+        if hkey in HOLIDAYS:
+            cell.value = DF[day_idx].upper() + "\n" + HOLIDAYS[hkey]
+            cell.font  = mf(7, color=TEXT_MED)
+            ws.row_dimensions[rs].height = 22
+        else:
+            cell.value = DF[day_idx].upper()
+            cell.font  = mf(7, color=TEXT_MED)
+        cell.alignment = al("left", "center", wrap=True)
 
         for col in range(c_start, c_end+1):
             ws.cell(rs, col).border = bdr(bottom=sd("thin", WARM_MED))
@@ -635,7 +682,7 @@ def make_goals_page(wb, goal_type):
     TOTAL_COLS = 22
     landscape_all(ws, rows=55, cols=TOTAL_COLS)
     for c in range(1, TOTAL_COLS+1):
-        ws.column_dimensions[get_column_letter(c)].width = 8.5
+        ws.column_dimensions[get_column_letter(c)].width = 9.5
     for r in range(1, 55): ws.row_dimensions[r].height = 14
     bg(ws, 1, 1, 55, TOTAL_COLS, CREAM)
     bg(ws, 1, 1, 4,  TOTAL_COLS, WARM_LIGHT)
@@ -665,15 +712,16 @@ def make_goals_page(wb, goal_type):
     c.font  = tf(13, bold=True, color=ACCENT); c.alignment = al("left","center")
     bg(ws, S2, 2, S2, TOTAL_COLS, ACCENT_LIGHT)
 
+    QW = TOTAL_COLS // 4  # = 5
     q_labels = ["Q1  Jan–Mar","Q2  Apr–Jun","Q3  Jul–Sep","Q4  Oct–Dec"]
-    q_cols   = [2, 7, 12, 17]
-    for q_lbl, qc in zip(q_labels, q_cols):
+    q_starts = [1 + i*QW for i in range(4)]
+    for q_lbl, qc in zip(q_labels, q_starts):
         ws.row_dimensions[S2+2].height = 16
-        c = mc(ws, S2+2, qc, S2+2, qc+3)
-        c.value = q_lbl; c.font = mf(8, bold=True, color=TEXT_MED); c.alignment = L
+        c = mc(ws, S2+2, qc, S2+2, qc+QW-1)
+        c.value = q_lbl; c.font = mf(8, bold=True, color=TEXT_MED); c.alignment = al("center")
         for lr in range(S2+3, S2+11):
             ws.row_dimensions[lr].height = 16
-            dot_line(ws, lr, qc, qc+3)
+            dot_line(ws, lr, qc, qc+QW-1)
 
     # ── Section 3: Action Steps
     S3 = S2 + 14
@@ -685,7 +733,10 @@ def make_goals_page(wb, goal_type):
 
     for lr in range(S3+2, min(S3+12, 55)):
         ws.row_dimensions[lr].height = 18
-        dot_line(ws, lr, 2, TOTAL_COLS)
+        ws.cell(lr, 2).value = "○"
+        ws.cell(lr, 2).font  = mf(9, color=ACCENT)
+        ws.cell(lr, 2).alignment = al("center")
+        dot_line(ws, lr, 3, TOTAL_COLS)
 
     return ws
 
@@ -831,11 +882,11 @@ def make_bucket_list(wb):
     TOTAL_COLS = 22
     landscape_all(ws, rows=52, cols=TOTAL_COLS)
     for c in range(1, TOTAL_COLS+1):
-        ws.column_dimensions[get_column_letter(c)].width = 9.5
-    bg(ws, 1, 1, 55, TOTAL_COLS, CREAM)
+        ws.column_dimensions[get_column_letter(c)].width = 10.5
+    bg(ws, 1, 1, 52, TOTAL_COLS, CREAM)
     bg(ws, 1, 1, 4,  TOTAL_COLS, WARM_LIGHT)
 
-    for r in range(1, 55): ws.row_dimensions[r].height = 14
+    for r in range(1, 53): ws.row_dimensions[r].height = 14
 
     c = mc(ws, 2, 1, 3, TOTAL_COLS)
     c.value = "Bucket List"; c.font = tf(24, bold=True); c.alignment = C
@@ -967,8 +1018,8 @@ def make_monthly_habit_tracker(wb, year, month):
     # ── Header
     bg(ws, 1, 1, 4, TOTAL_COLS, WARM_LIGHT)
     ws.row_dimensions[1].height = 8
-    ws.row_dimensions[2].height = 22
-    ws.row_dimensions[3].height = 14
+    ws.row_dimensions[2].height = 30
+    ws.row_dimensions[3].height = 18
     ws.row_dimensions[4].height = 8
 
     c = mc(ws, 2, 1, 2, TOTAL_COLS)
@@ -1141,8 +1192,8 @@ def make_next_year_page(wb):
     sections = [
         (5,  "Goals for 2028",          13),
         (14, "Intentions & Hopes",      24),
-        (25, "Word(s) for the Year",    33),
-        (34, "Things to Start / Stop",  44),
+        (25, "Word(s) for the Year Ahead",    33),
+        (34, "Things to Change",  44),
     ]
     for sr, slbl, er in sections:
         ws.row_dimensions[sr].height = 20
@@ -1158,6 +1209,186 @@ def make_next_year_page(wb):
     ws.row_dimensions[52].height = 18
     ws.row_dimensions[53].height = 8
     _add_branding(ws, 52, 2, TOTAL_COLS-1)
+
+    return ws
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# SEASONAL PLANNING TAB
+# ══════════════════════════════════════════════════════════════════════════════
+SEASON_ICONS = {"Spring":"🌸","Summer":"☀️","Fall":"🍂","Winter":"❄️"}
+
+SEASON_TASKS = {
+    "cleaning": {
+        "all": [
+            "Declutter all common areas (living room, kitchen, entryways)",
+            "Wipe down baseboards throughout the house",
+            "Clean light fixtures and ceiling fans",
+            "Wipe tops of door frames and door knobs",
+            "Wash windows (inside)",
+            "Deep clean refrigerator",
+        ],
+        "Spring": [
+            "Garage cleanout + organization",
+            "Kids' spring/summer clothing switchover",
+            "Wash and store winter bedding",
+            "Deep clean oven and stovetop",
+        ],
+        "Summer": [
+            "Declutter kids' toys and gear",
+            "Refresh outdoor entertaining area",
+            "Restock sunscreen and outdoor supplies",
+        ],
+        "Fall": [
+            "Kids' fall/winter clothing switchover",
+            "Bedroom deep clean + organize closets",
+            "Store and cover summer outdoor gear",
+        ],
+        "Winter": [
+            "Deep clean guest rooms before holiday gatherings",
+            "Holiday décor: organize setup + storage plan",
+            "Year-end filing / paperwork organization",
+        ],
+    },
+    "maintenance": {
+        "all": [
+            "Check & replace furnace/HVAC air filter",
+            "Check & test smoke detectors and CO detectors",
+            "Clean dryer vent (lint buildup = fire hazard)",
+        ],
+        "Spring": [
+            "Gutter cleaning (winter debris)",
+            "Check outdoor hoses and spigots",
+            "Service lawn mower / outdoor equipment",
+            "Check deck/porch for winter damage",
+            "Outdoor furniture: uncover, wash, set up",
+        ],
+        "Summer": [
+            "Check roof for storm damage",
+            "Inspect window screens for tears/holes",
+            "Check caulking around windows, tubs, sinks",
+        ],
+        "Fall": [
+            "Schedule furnace/HVAC service before winter",
+            "Check weatherstripping on doors and windows",
+            "Reverse ceiling fans (clockwise for winter heat)",
+            "Stock up: ice melt, shovels ready",
+            "Flush water heater (remove sediment)",
+            "Check pipe insulation in unheated spaces",
+        ],
+        "Winter": [
+            "Monitor gutters for ice dams",
+            "Check pipes in unheated areas (prevent freezing)",
+            "Check flashlights / power outage emergency kit",
+            "Schedule furnace tune-up if not done in fall",
+            "Keep walkways salted and clear",
+        ],
+    },
+}
+
+def make_season_tab(wb, season, year):
+    ws = wb.create_sheet(f"{season} {year}")
+    TOTAL_COLS = 42
+    landscape_all(ws, scale=80, rows=54, cols=TOTAL_COLS)
+
+    for c in range(1, TOTAL_COLS+1):
+        ws.column_dimensions[get_column_letter(c)].width = 5.5
+    for r in range(1, 55): ws.row_dimensions[r].height = 14
+
+    bg(ws, 1, 1, 54, TOTAL_COLS, CREAM)
+
+    # ── Header (rows 1-4)
+    bg(ws, 1, 1, 4, TOTAL_COLS, WARM_LIGHT)
+    ws.row_dimensions[1].height = 6
+    ws.row_dimensions[2].height = 28
+    ws.row_dimensions[3].height = 16
+    ws.row_dimensions[4].height = 8
+
+    c = mc(ws, 2, 1, 2, TOTAL_COLS)
+    c.value = f"{season} {year}"; c.font = tf(26, bold=True); c.alignment = al("center")
+
+    icon = SEASON_ICONS.get(season, "")
+    c = mc(ws, 3, 1, 3, TOTAL_COLS)
+    c.value = f"{icon}  {season} Planning  ·  {year}"
+    c.font = mf(9, italic=True, color=TEXT_MED); c.alignment = al("center")
+
+    for col in range(1, TOTAL_COLS+1):
+        ws.cell(4, col).border = bdr(bottom=sd("medium", ACCENT))
+
+    # ── Two-column layout: rows 5-32
+    LEFT_END = 20
+    DIV_COL  = 21
+    RIGHT_START = 22
+
+    # Left header
+    ws.row_dimensions[5].height = 18
+    c = mc(ws, 5, 1, 5, LEFT_END)
+    c.value = "Cleaning & Declutter"
+    c.font = tf(11, bold=True, color=ACCENT); c.alignment = al("center")
+    bg(ws, 5, 1, 5, LEFT_END, ACCENT_LIGHT)
+
+    # Right header
+    c = mc(ws, 5, RIGHT_START, 5, TOTAL_COLS)
+    c.value = "Home Maintenance"
+    c.font = tf(11, bold=True, color=TEXT_MED); c.alignment = al("center")
+    bg(ws, 5, RIGHT_START, 5, TOTAL_COLS, WARM_LIGHT)
+
+    # Divider
+    bg(ws, 5, DIV_COL, 32, DIV_COL, WARM_MED)
+
+    # Left: cleaning tasks
+    clean_tasks = SEASON_TASKS["cleaning"]["all"] + SEASON_TASKS["cleaning"].get(season, [])
+    # add 2 blank rows
+    clean_tasks += ["", ""]
+    lr = 6
+    for task in clean_tasks[:14]:
+        ws.row_dimensions[lr].height = 16
+        ws.cell(lr, 1).value = "○"
+        ws.cell(lr, 1).font  = mf(8, color=ACCENT)
+        ws.cell(lr, 1).alignment = al("center")
+        c = mc(ws, lr, 2, lr, LEFT_END)
+        c.value = task
+        c.font = mf(8, color=TEXT_DARK if task else TEXT_LIGHT)
+        c.alignment = al("left", "center")
+        if not task:
+            dot_line(ws, lr, 2, LEFT_END)
+        lr += 1
+
+    # Right: maintenance tasks
+    maint_tasks = SEASON_TASKS["maintenance"]["all"] + SEASON_TASKS["maintenance"].get(season, [])
+    maint_tasks += ["", "", ""]
+    mr = 6
+    for task in maint_tasks[:14]:
+        ws.row_dimensions[mr].height = 16
+        ws.cell(mr, RIGHT_START).value = "○"
+        ws.cell(mr, RIGHT_START).font  = mf(8, color=TEXT_MED)
+        ws.cell(mr, RIGHT_START).alignment = al("center")
+        c = mc(ws, mr, RIGHT_START+1, mr, TOTAL_COLS)
+        c.value = task
+        c.font = mf(8, color=TEXT_DARK if task else TEXT_LIGHT)
+        c.alignment = al("left", "center")
+        if not task:
+            dot_line(ws, mr, RIGHT_START+1, TOTAL_COLS)
+        mr += 1
+
+    # ── Three-column bottom band: rows 33-53
+    THIRD = TOTAL_COLS // 3   # 14
+    SEC_TITLES = ["Things to Consider This Season", "New Recipes to Try", "Notes"]
+    for i, title in enumerate(SEC_TITLES):
+        sc = 1 + i * THIRD
+        ec = sc + THIRD - 1 if i < 2 else TOTAL_COLS
+        ws.row_dimensions[33].height = 18
+        c = mc(ws, 33, sc, 33, ec)
+        c.value = title; c.font = mf(8, bold=True, color=ACCENT if i == 0 else TEXT_MED)
+        c.alignment = al("center")
+        bg(ws, 33, sc, 33, ec, ACCENT_LIGHT if i == 0 else WARM_LIGHT)
+        for wr in range(34, 54):
+            ws.row_dimensions[wr].height = 14
+            dot_line(ws, wr, sc, ec)
+
+    # ── Branding
+    ws.row_dimensions[54].height = 16
+    _add_branding(ws, 54, 2, TOTAL_COLS-1)
 
     return ws
 
@@ -1185,11 +1416,22 @@ def build_planner():
     make_goals_page(wb, "Professional")
     make_vision_board(wb)
     make_bucket_list(wb)
-    make_self_care_tracker(wb)
+
+    SEASON_MONTHS = {
+        (2026, 9):  ("Fall",   2026),
+        (2026, 12): ("Winter", 2026),
+        (2027, 3):  ("Spring", 2027),
+        (2027, 6):  ("Summer", 2027),
+        (2027, 9):  ("Fall",   2027),
+        (2027, 12): ("Winter", 2027),
+    }
 
     print("Monthly + weekly layouts...")
     for (year, month) in MONTHS_PLANNER:
         print(f"  {MN[month]} {year}")
+        if (year, month) in SEASON_MONTHS:
+            s, sy = SEASON_MONTHS[(year, month)]
+            make_season_tab(wb, s, sy)
         make_monthly_layout(wb, year, month)
         make_monthly_habit_tracker(wb, year, month)
         for week in weeks_of_month(year, month):
