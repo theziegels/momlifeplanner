@@ -200,7 +200,7 @@ def make_cover(wb):
     # ── Tagline
     ws.row_dimensions[44].height = 16
     c = mc(ws, 44, 2, 44, TOTAL_COLS-1)
-    c.value = "plan  ·  dream  ·  do  ·  thrive"
+    c.value = "dream  ·  plan  ·  do  ·  thrive"
     c.font  = mf(9, italic=True, color=TEXT_LIGHT); c.alignment = al("center")
 
     # ── Branding
