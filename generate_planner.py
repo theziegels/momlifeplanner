@@ -1312,9 +1312,8 @@ def make_season_tab(wb, season, year):
     c = mc(ws, 2, 1, 2, TOTAL_COLS)
     c.value = f"{season} {year}"; c.font = tf(26, bold=True); c.alignment = al("center")
 
-    icon = SEASON_ICONS.get(season, "")
     c = mc(ws, 3, 1, 3, TOTAL_COLS)
-    c.value = f"{icon}  {season} Planning  ·  {year}"
+    c.value = f"A well-laid plan makes every season of life a little more beautiful."
     c.font = mf(9, italic=True, color=TEXT_MED); c.alignment = al("center")
 
     for col in range(1, TOTAL_COLS+1):
