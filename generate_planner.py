@@ -695,7 +695,7 @@ def make_goals_page(wb, goal_type):
     TOTAL_COLS = 22
     landscape_all(ws, rows=55, cols=TOTAL_COLS)
     for c in range(1, TOTAL_COLS+1):
-        ws.column_dimensions[get_column_letter(c)].width = 10.0
+        ws.column_dimensions[get_column_letter(c)].width = 11.5
     for r in range(1, 55): ws.row_dimensions[r].height = 14
     bg(ws, 1, 1, 55, TOTAL_COLS, CREAM)
     bg(ws, 1, 1, 4,  TOTAL_COLS, WARM_LIGHT)
