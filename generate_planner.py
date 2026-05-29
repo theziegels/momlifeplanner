@@ -586,7 +586,7 @@ def make_weekly_layout(wb, week_dates, month_name, year):
     c.font  = tf(18, bold=True, italic=True, color=TEXT_DARK)
     c.alignment = al("left", "center")
 
-    c = mc(ws, 1, 9, 2, 13)
+    c = mc(ws, 1, 9, 2, 11)
     c.value = f"{start_d.strftime('%-m/%-d')} – {end_d.strftime('%-m/%-d')}"
     c.font  = mf(8, italic=True, color=TEXT_MED)
     c.alignment = al("right", "center")
