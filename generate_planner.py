@@ -142,72 +142,74 @@ def weeks_of_month(year, month):
 def make_cover(wb):
     ws = wb.create_sheet("Cover")
     TOTAL_COLS = 20
-    landscape_all(ws, rows=50, cols=TOTAL_COLS)
+    landscape_all(ws, rows=56, cols=TOTAL_COLS)
     for c in range(1, TOTAL_COLS+1):
         ws.column_dimensions[get_column_letter(c)].width = 10.2
-    for r in range(1, 50):
+    for r in range(1, 57):
         ws.row_dimensions[r].height = 14
 
-    bg(ws, 1, 1, 50, TOTAL_COLS, CREAM)
+    bg(ws, 1, 1, 56, TOTAL_COLS, CREAM)
 
     # Border strips — all WARM_MED, all four sides
-    STRIP = 1   # col/row width of border strip
-    bg(ws, 1,    1,    3,    TOTAL_COLS, WARM_MED)   # top bar
-    bg(ws, 48,   1,    50,   TOTAL_COLS, WARM_MED)   # bottom bar
-    bg(ws, 1,    1,    50,   STRIP,      WARM_MED)   # left strip
-    bg(ws, 1,    TOTAL_COLS, 50, TOTAL_COLS, WARM_MED)  # right strip
+    STRIP = 1
+    bg(ws, 1,  1,    3,    TOTAL_COLS, WARM_MED)   # top bar
+    bg(ws, 53, 1,    56,   TOTAL_COLS, WARM_MED)   # bottom bar
+    bg(ws, 1,  1,    56,   STRIP,      WARM_MED)   # left strip
+    bg(ws, 1,  TOTAL_COLS, 56, TOTAL_COLS, WARM_MED)  # right strip
 
     # Thin accent rule just inside the top bar
     for col in range(2, TOTAL_COLS):
         ws.cell(4, col).border = bdr(bottom=sd("thin", ACCENT))
 
-    # ── Title block
-    # Equal spacing: 10pt gap above and below Mom Life
-    ws.row_dimensions[11].height = 18   # THE ULTIMATE
-    ws.row_dimensions[12].height = 4   # gap above Mom Life
-    ws.row_dimensions[13].height = 55
-    ws.row_dimensions[14].height = 55
-    ws.row_dimensions[15].height = 4   # gap below Mom Life (matches above)
-    ws.row_dimensions[16].height = 18   # PLANNER
+    # ── Title block — centered at ~42% down the page
+    ws.row_dimensions[20].height = 18   # THE ULTIMATE
+    ws.row_dimensions[21].height = 4    # gap
+    ws.row_dimensions[22].height = 55   # Mom Life (top)
+    ws.row_dimensions[23].height = 55   # Mom Life (bottom)
+    ws.row_dimensions[24].height = 4    # gap
+    ws.row_dimensions[25].height = 18   # PLANNER
+    ws.row_dimensions[26].height = 24   # accent rule under title
 
-    c = mc(ws, 11, 2, 11, TOTAL_COLS-1)
+    c = mc(ws, 20, 2, 20, TOTAL_COLS-1)
     c.value = "THE ULTIMATE"; c.font = tf(13, italic=True, color=TEXT_MED)
     c.alignment = al("center")
 
-    c = mc(ws, 13, 2, 14, TOTAL_COLS-1)
+    c = mc(ws, 22, 2, 23, TOTAL_COLS-1)
     c.value = "Mom Life"; c.font = tf(52, bold=True, color=TEXT_DARK)
     c.alignment = al("center")
 
-    c = mc(ws, 16, 2, 16, TOTAL_COLS-1)
+    c = mc(ws, 25, 2, 25, TOTAL_COLS-1)
     c.value = "P  L  A  N  N  E  R"; c.font = mf(13, color=ACCENT)
     c.alignment = al("center")
 
     # Thin accent rule under title
     for col in range(4, TOTAL_COLS-2):
-        ws.cell(17, col).border = bdr(bottom=sd("thin", ACCENT))
-    ws.row_dimensions[17].height = 24
+        ws.cell(26, col).border = bdr(bottom=sd("thin", ACCENT))
 
-    c = mc(ws, 19, 2, 19, TOTAL_COLS-1)
+    c = mc(ws, 29, 2, 29, TOTAL_COLS-1)
     c.value = "August 2026 – December 2027"
     c.font = mf(10, italic=True, color=TEXT_MED); c.alignment = al("center")
 
-    # ── Inspirational quote
-    ws.row_dimensions[33].height = 18
-    ws.row_dimensions[34].height = 18
-    c = mc(ws, 33, 3, 34, TOTAL_COLS-2)
+    # ── Scripture quote
+    ws.row_dimensions[35].height = 18
+    ws.row_dimensions[36].height = 18
+    c = mc(ws, 35, 3, 36, TOTAL_COLS-2)
     c.value = '"You are worried and distracted by many things —\nthere is need of only one thing."  — Luke 10:41–42'
     c.font  = tf(14, italic=True, color=TEXT_MED); c.alignment = al("center")
 
     # ── Tagline
-    ws.row_dimensions[40].height = 16
-    c = mc(ws, 40, 2, 40, TOTAL_COLS-1)
+    ws.row_dimensions[44].height = 16
+    c = mc(ws, 44, 2, 44, TOTAL_COLS-1)
     c.value = "plan  ·  dream  ·  do  ·  thrive"
     c.font  = mf(9, italic=True, color=TEXT_LIGHT); c.alignment = al("center")
 
     # ── Branding
-    ws.row_dimensions[44].height = 18
-    ws.row_dimensions[45].height = 16
-    _add_branding(ws, 44, 2, TOTAL_COLS-1)
+    ws.row_dimensions[50].height = 18
+    _add_branding(ws, 50, 2, TOTAL_COLS-1)
+
+    # ── Thin accent rule just inside the bottom bar (mirrors top)
+    for col in range(2, TOTAL_COLS):
+        ws.cell(52, col).border = bdr(bottom=sd("thin", ACCENT))
 
     return ws
 
@@ -902,19 +904,19 @@ def make_bucket_list(wb):
         ("Just for Fun",         42),
     ]
     for cat_name, sr in cats:
-        ws.row_dimensions[sr].height = 22   # tall enough for header text
-        c = mc(ws, sr, 2, sr, TOTAL_COLS)
+        ws.row_dimensions[sr].height = 22
+        c = mc(ws, sr, 1, sr, TOTAL_COLS)
         c.value = cat_name
         c.font  = tf(12, bold=True, color=ACCENT)
         c.alignment = al("left","center")
-        bg(ws, sr, 2, sr, TOTAL_COLS, ACCENT_LIGHT)
+        bg(ws, sr, 1, sr, TOTAL_COLS, ACCENT_LIGHT)
 
         for lr in range(sr+1, sr+10):
             ws.row_dimensions[lr].height = 18
-            ws.cell(lr, 2).value = "○"
-            ws.cell(lr, 2).font  = mf(9, color=ACCENT)
-            ws.cell(lr, 2).alignment = al("center")
-            dot_line(ws, lr, 3, TOTAL_COLS)
+            ws.cell(lr, 1).value = "○"
+            ws.cell(lr, 1).font  = mf(9, color=ACCENT)
+            ws.cell(lr, 1).alignment = al("center")
+            dot_line(ws, lr, 2, TOTAL_COLS)
 
     return ws
 
