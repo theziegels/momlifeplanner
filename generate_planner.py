@@ -295,13 +295,13 @@ def make_important_contacts(wb):
     # Col A: category label (wide); cols 2-5: Name; 6: gap; 7-10: Phone;
     # 11: gap; 12-16: Email; 17: gap; 18-22: Notes
     ws.column_dimensions["A"].width = 24
-    for c in range(2, 6):   ws.column_dimensions[get_column_letter(c)].width = 10
+    for c in range(2, 6):   ws.column_dimensions[get_column_letter(c)].width = 11
     ws.column_dimensions["F"].width = 2.0
-    for c in range(7, 11):  ws.column_dimensions[get_column_letter(c)].width = 10
+    for c in range(7, 11):  ws.column_dimensions[get_column_letter(c)].width = 11
     ws.column_dimensions["K"].width = 2.0
-    for c in range(12, 17): ws.column_dimensions[get_column_letter(c)].width = 8.5
+    for c in range(12, 17): ws.column_dimensions[get_column_letter(c)].width = 9.0
     ws.column_dimensions["Q"].width = 2.5
-    for c in range(18, 23): ws.column_dimensions[get_column_letter(c)].width = 10
+    for c in range(18, 23): ws.column_dimensions[get_column_letter(c)].width = 11
 
     for r in range(1, 55): ws.row_dimensions[r].height = 14
     bg(ws, 1, 1, 54, 22, CREAM)
@@ -684,7 +684,7 @@ def make_goals_page(wb, goal_type):
     TOTAL_COLS = 22
     landscape_all(ws, rows=55, cols=TOTAL_COLS)
     for c in range(1, TOTAL_COLS+1):
-        ws.column_dimensions[get_column_letter(c)].width = 9.5
+        ws.column_dimensions[get_column_letter(c)].width = 10.0
     for r in range(1, 55): ws.row_dimensions[r].height = 14
     bg(ws, 1, 1, 55, TOTAL_COLS, CREAM)
     bg(ws, 1, 1, 4,  TOTAL_COLS, WARM_LIGHT)
@@ -1009,10 +1009,13 @@ def make_monthly_habit_tracker(wb, year, month):
     TOTAL_COLS = 1 + days_in_month + 1
     landscape_all(ws, scale=80, rows=40, cols=TOTAL_COLS)
 
-    ws.column_dimensions["A"].width = 22
+    # Dynamic day-col width so all months print at identical scale
+    A_W, NOTES_W = 22, 12
+    day_w = round((203 - A_W - NOTES_W) / days_in_month, 2)
+    ws.column_dimensions["A"].width = A_W
     for c in range(2, days_in_month+2):
-        ws.column_dimensions[get_column_letter(c)].width = 3.4
-    ws.column_dimensions[get_column_letter(TOTAL_COLS)].width = 12
+        ws.column_dimensions[get_column_letter(c)].width = day_w
+    ws.column_dimensions[get_column_letter(TOTAL_COLS)].width = NOTES_W
 
     for r in range(1, 41): ws.row_dimensions[r].height = 14
     bg(ws, 1, 1, 40, TOTAL_COLS, CREAM)
@@ -1335,8 +1338,9 @@ def make_season_tab(wb, season, year):
     c.font = tf(11, bold=True, color=TEXT_MED); c.alignment = al("center")
     bg(ws, 5, RIGHT_START, 5, TOTAL_COLS, WARM_LIGHT)
 
-    # Divider
-    bg(ws, 5, DIV_COL, 32, DIV_COL, WARM_MED)
+    # Thin divider line (no filled column)
+    for dr in range(5, 33):
+        ws.cell(dr, DIV_COL).border = bdr(right=sd("thin", WARM_MED))
 
     # Left: cleaning tasks
     clean_tasks = SEASON_TASKS["cleaning"]["all"] + SEASON_TASKS["cleaning"].get(season, [])
@@ -1375,7 +1379,7 @@ def make_season_tab(wb, season, year):
 
     # ── Three-column bottom band: rows 33-53
     THIRD = TOTAL_COLS // 3   # 14
-    SEC_TITLES = ["Things to Consider This Season", "New Recipes to Try", "Notes"]
+    SEC_TITLES = ["Scripture to Lean Into This Season", "New Recipes to Try", "Notes"]
     for i, title in enumerate(SEC_TITLES):
         sc = 1 + i * THIRD
         ec = sc + THIRD - 1 if i < 2 else TOTAL_COLS
