@@ -824,7 +824,7 @@ def _generate_brain_map_image(path):
     ax.text(0.3,10.75,"① Write your central topic in the center box.",ha='left',**instr)
     ax.text(0.3,10.43,"② Fill in a branch circle for each key theme.", ha='left',**instr)
     ax.text(0.3,10.11,"③ Add details or actions in the side boxes.",   ha='left',**instr)
-    ax.text(11.8,10.8,"Brain Map",ha='left',va='top',
+    ax.text(13.0,9.4,"Brain Map",ha='left',va='top',
             fontsize=38,color="#"+TEXT_DARK,fontproperties=cg_prop)
 
     plt.tight_layout(pad=0.2)
