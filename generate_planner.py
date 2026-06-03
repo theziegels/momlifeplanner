@@ -10,6 +10,7 @@ from datetime import date, timedelta
 from openpyxl import Workbook
 from openpyxl.styles import PatternFill, Font, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
+from openpyxl.drawing.image import Image as XLImage
 
 # ── Brand Colors ──────────────────────────────────────────────────────────────
 CREAM        = "FDFCFB"
@@ -755,45 +756,100 @@ def make_goals_page(wb, goal_type):
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# BRAIN MAP  (flagged for redesign)
+# BRAIN MAP  –  matplotlib image embedded in worksheet
 # ══════════════════════════════════════════════════════════════════════════════
+def _generate_brain_map_image(path):
+    import matplotlib
+    matplotlib.use('Agg')
+    import matplotlib.pyplot as plt
+    import matplotlib.font_manager as fm
+    from matplotlib.patches import FancyBboxPatch
+
+    font_path = '/tmp/CormorantGaramond-Bold.ttf'
+    try:
+        fm.fontManager.addfont(font_path)
+        cg_prop = fm.FontProperties(fname=font_path)
+    except Exception:
+        cg_prop = fm.FontProperties(family='serif')
+
+    WARM_LIGHT_M = "#F6F0EB"; WARM_DARK_M = "#CBBFB8"
+    BRANCH_COLORS = ["#D4B5B5","#C8C2BA","#B8C5C8","#C4C8B5","#C8B8C4"]
+
+    fig, ax = plt.subplots(figsize=(16, 11))
+    ax.set_xlim(0,16); ax.set_ylim(0,11); ax.set_aspect('equal'); ax.axis('off')
+    fig.patch.set_facecolor("#"+CREAM); ax.set_facecolor("#"+CREAM)
+
+    cx,cy=8.0,5.3; branch_r=0.95; nw,nh=2.2,0.40; spacing=0.62
+    center_hw,center_hh=1.35,0.6
+
+    branch_data=[
+        (90,  2.5, 10.3,  9.2,  BRANCH_COLORS[0]),
+        (18,  3.5, 13.76, 6.63, BRANCH_COLORS[1]),
+        (306, 2.7, 12.6,  2.7,  BRANCH_COLORS[2]),
+        (234, 2.7,  3.4,  2.7,  BRANCH_COLORS[3]),
+        (162, 3.5,  2.04, 6.63, BRANCH_COLORS[4]),
+    ]
+
+    import numpy as np
+    for angle,dist,col_x,col_y,color in branch_data:
+        rad=np.radians(angle); bx=cx+np.cos(rad)*dist; by=cy+np.sin(rad)*dist
+        ux,uy=np.cos(rad),np.sin(rad)
+        ax.plot([cx+ux*(center_hw+0.05), bx-ux*(branch_r+0.05)],
+                [cy+uy*(center_hh+0.05), by-uy*(branch_r+0.05)],
+                color=WARM_DARK_M,lw=1.4,zorder=1,solid_capstyle='round')
+        ax.add_patch(plt.Circle((bx,by),branch_r,color=color,zorder=3,alpha=0.85))
+        ax.add_patch(plt.Circle((bx,by),branch_r,fill=False,
+                                 edgecolor=WARM_DARK_M,linewidth=0.9,zorder=4))
+        dx=col_x-bx; dy=col_y-by; dc=np.hypot(dx,dy); sux,suy=dx/dc,dy/dc
+        use_left=sux>0.25; use_right=sux<-0.25
+        use_bot=suy>0.25 and abs(sux)<=0.25
+        for i in range(3):
+            ny=col_y+(i-1)*spacing; nx=col_x
+            ax.add_patch(FancyBboxPatch((nx-nw/2,ny-nh/2),nw,nh,
+                boxstyle="round,pad=0.08",linewidth=0.8,
+                edgecolor=WARM_DARK_M,facecolor=WARM_LIGHT_M,zorder=5))
+            sx=bx+sux*branch_r*1.03; sy=by+suy*branch_r*1.03
+            if use_left:    ex,ey=nx-nw/2,ny
+            elif use_right: ex,ey=nx+nw/2,ny
+            elif use_bot:   ex,ey=nx,ny-nh/2
+            else:           ex,ey=nx,ny+nh/2
+            ax.plot([sx,ex],[sy,ey],color=WARM_DARK_M,lw=0.75,zorder=2)
+
+    ax.add_patch(FancyBboxPatch((cx-1.35,cy-0.6),2.7,1.2,
+        boxstyle="round,pad=0.18",linewidth=1.8,
+        edgecolor=WARM_DARK_M,facecolor=WARM_LIGHT_M,zorder=6))
+
+    instr=dict(fontsize=8,color="#"+TEXT_LIGHT,fontstyle='italic',
+               fontfamily='sans-serif',va='top')
+    ax.text(0.3,10.75,"① Write your central topic in the center box.",ha='left',**instr)
+    ax.text(0.3,10.43,"② Fill in a branch circle for each key theme.", ha='left',**instr)
+    ax.text(0.3,10.11,"③ Add details or actions in the side boxes.",   ha='left',**instr)
+    ax.text(11.8,10.8,"Brain Map",ha='left',va='top',
+            fontsize=38,color="#"+TEXT_DARK,fontproperties=cg_prop)
+
+    plt.tight_layout(pad=0.2)
+    plt.savefig(path,dpi=180,bbox_inches='tight',facecolor="#"+CREAM)
+    plt.close(fig)
+
 def make_brain_map(wb):
+    import tempfile, os
     ws = wb.create_sheet("Brain Map")
-    TOTAL_COLS = 28
-    landscape_all(ws, rows=50, cols=TOTAL_COLS)
-    for c in range(1, TOTAL_COLS+1):
-        ws.column_dimensions[get_column_letter(c)].width = 6.0
-    for r in range(1, 50): ws.row_dimensions[r].height = 13
-    bg(ws, 1, 1, 50, TOTAL_COLS, CREAM)
-    bg(ws, 1, 1, 3,  TOTAL_COLS, WARM_LIGHT)
+    landscape_all(ws, scale=80, rows=54, cols=42)
+    bg(ws, 1, 1, 54, 42, CREAM)
+    for c in range(1, 43):
+        ws.column_dimensions[get_column_letter(c)].width = 5.8
+    for r in range(1, 55):
+        ws.row_dimensions[r].height = 13
 
-    c = mc(ws, 2, 1, 2, TOTAL_COLS)
-    c.value = "Brain Map"; c.font = tf(22, bold=True); c.alignment = C
-    c = mc(ws, 3, 1, 3, TOTAL_COLS)
-    c.value = "Place your central idea in the center, then branch outward."
-    c.font = mf(8, italic=True, color=TEXT_MED); c.alignment = C
+    img_path = os.path.join(tempfile.gettempdir(), "brain_map_embed.png")
+    _generate_brain_map_image(img_path)
 
-    cr, cc = 26, 13
-    bg(ws, cr-2, cc-1, cr+2, cc+3, ACCENT_LIGHT)
-    cell = mc(ws, cr-2, cc-1, cr+2, cc+3)
-    cell.value = "Central\nIdea"; cell.font = tf(12, bold=True, color=ACCENT)
-    cell.alignment = al("center")
-    bdr_range(ws, cr-2, cc-1, cr+2, cc+3,
-              bdr(left=sd("medium",ACCENT),right=sd("medium",ACCENT),
-                  top=sd("medium",ACCENT),bottom=sd("medium",ACCENT)))
-
-    branch_boxes = [(8,3,6),(8,12,15),(8,21,24),(26,2,5),(26,18,21),
-                    (40,3,6),(40,12,15),(40,21,24)]
-    for (br_r, bc1, bc2) in branch_boxes:
-        bg(ws, br_r, bc1, br_r+3, bc2, WARM_LIGHT)
-        cell = mc(ws, br_r, bc1, br_r+3, bc2)
-        bdr_range(ws, br_r, bc1, br_r+3, bc2,
-                  bdr(left=sd(),right=sd(),top=sd(),bottom=sd()))
-        for sub_r in range(br_r, br_r+4):
-            for sub_c in range(max(1,bc1-3), bc1):
-                ws.cell(sub_r, sub_c).border = bdr(bottom=sd("hair",WARM_MED))
-            for sub_c in range(bc2+1, min(TOTAL_COLS,bc2+4)):
-                ws.cell(sub_r, sub_c).border = bdr(bottom=sd("hair",WARM_MED))
+    img = XLImage(img_path)
+    # Scale to fill the print area (42 cols × 5.8 ≈ 243 units × 0.079 ≈ 19.2" → 1382px at 72dpi)
+    img.width  = 1260
+    img.height = 866
+    img.anchor = "A1"
+    ws.add_image(img)
     return ws
 
 
