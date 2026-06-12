@@ -256,9 +256,9 @@ def make_how_to_use(wb):
         (24, "Goals Pages",
              "Separate pages for Family, Personal, and Professional goals — "
              "big goals, quarterly breakdown, and action steps."),
-        (30, "Brain Map & Brainstorm",
-             "Brain Map: central idea branching outward in all directions. "
-             "Brainstorm: spine-and-branch layout for free-flow thinking."),
+        (30, "Brain Map",
+             "Central idea branching outward in all directions — "
+             "great for free-flow thinking and planning."),
         (36, "Vision Board + Extras",
              "Vision Board, Bucket List, and Important Contacts — "
              "because a well-planned life is a well-lived life."),
@@ -850,50 +850,6 @@ def make_brain_map(wb):
     img.height = 866
     img.anchor = "A1"
     ws.add_image(img)
-    return ws
-
-
-# ══════════════════════════════════════════════════════════════════════════════
-# BRAINSTORM  (flagged for redesign)
-# ══════════════════════════════════════════════════════════════════════════════
-def make_brainstorm(wb):
-    ws = wb.create_sheet("Brainstorm")
-    TOTAL_COLS = 28
-    landscape_all(ws, rows=50, cols=TOTAL_COLS)
-    for c in range(1, TOTAL_COLS+1):
-        ws.column_dimensions[get_column_letter(c)].width = 6.0
-    for r in range(1, 50): ws.row_dimensions[r].height = 13
-    bg(ws, 1, 1, 50, TOTAL_COLS, CREAM)
-    bg(ws, 1, 1, 3,  TOTAL_COLS, WARM_LIGHT)
-
-    c = mc(ws, 2, 1, 2, TOTAL_COLS)
-    c.value = "Brainstorm"; c.font = tf(22, bold=True); c.alignment = C
-    c = mc(ws, 3, 1, 3, TOTAL_COLS)
-    c.value = "Start with your main idea on the left. Let every branch spark the next."
-    c.font = mf(8, italic=True, color=TEXT_MED); c.alignment = C
-
-    spine_row = 26
-    for col in range(2, TOTAL_COLS):
-        ws.cell(spine_row, col).border = bdr(bottom=sd("medium", TEXT_MED))
-
-    bg(ws, spine_row-1, 1, spine_row+1, 3, ACCENT_LIGHT)
-    cell = mc(ws, spine_row-1, 1, spine_row+1, 3)
-    cell.value = "Main\nIdea"; cell.font = tf(10, bold=True, color=ACCENT)
-    cell.alignment = al("center")
-    bdr_range(ws, spine_row-1, 1, spine_row+1, 3,
-              bdr(left=sd("medium",ACCENT),right=sd("medium",ACCENT),
-                  top=sd("medium",ACCENT),bottom=sd("medium",ACCENT)))
-
-    for bc in [5, 9, 13, 17, 21, 25]:
-        for arm in range(1, 4):
-            for sign in [-1, 1]:
-                br = spine_row + sign * arm * 5
-                if 5 <= br <= 48:
-                    mc(ws, br, bc, br, bc+2).border = bdr(bottom=sd("thin",WARM_DARK))
-                    for leaf in range(1, 3):
-                        lc = bc - leaf
-                        if lc >= 1:
-                            ws.cell(br, lc).border = bdr(bottom=sd("hair",WARM_MED))
     return ws
 
 
@@ -1518,7 +1474,6 @@ def build_planner():
 
     print("Planning pages...")
     make_brain_map(wb)
-    make_brainstorm(wb)
     make_goals_page(wb, "Family")
     make_goals_page(wb, "Personal")
     make_goals_page(wb, "Professional")
