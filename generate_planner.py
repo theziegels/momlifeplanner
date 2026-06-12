@@ -145,7 +145,7 @@ def make_cover(wb):
     TOTAL_COLS = 20
     landscape_all(ws, rows=56, cols=TOTAL_COLS)
     for c in range(1, TOTAL_COLS+1):
-        ws.column_dimensions[get_column_letter(c)].width = 10.6
+        ws.column_dimensions[get_column_letter(c)].width = 11.4
     for r in range(1, 57):
         ws.row_dimensions[r].height = 14
 
@@ -163,50 +163,44 @@ def make_cover(wb):
         ws.cell(4, col).border = bdr(bottom=sd("thin", ACCENT))
 
     # ── Title block — centered at ~42% down the page
-    ws.row_dimensions[20].height = 18   # THE ULTIMATE
-    ws.row_dimensions[21].height = 4    # gap
-    ws.row_dimensions[22].height = 55   # Mom Life (top)
-    ws.row_dimensions[23].height = 55   # Mom Life (bottom)
-    ws.row_dimensions[24].height = 4    # gap
-    ws.row_dimensions[25].height = 18   # PLANNER
-    ws.row_dimensions[26].height = 24   # accent rule under title
+    ws.row_dimensions[20].height = 65   # Mom Life (top)
+    ws.row_dimensions[21].height = 65   # Mom Life (bottom)
+    ws.row_dimensions[22].height = 3    # gap
+    ws.row_dimensions[23].height = 22   # PLANNER
+    ws.row_dimensions[24].height = 24   # accent rule under title
 
-    c = mc(ws, 20, 2, 20, TOTAL_COLS-1)
-    c.value = "THE ULTIMATE"; c.font = tf(13, italic=True, color=TEXT_MED)
+    c = mc(ws, 20, 2, 21, TOTAL_COLS-1)
+    c.value = "Mom Life"; c.font = tf(66, bold=True, color=TEXT_DARK)
     c.alignment = al("center")
 
-    c = mc(ws, 22, 2, 23, TOTAL_COLS-1)
-    c.value = "Mom Life"; c.font = tf(52, bold=True, color=TEXT_DARK)
-    c.alignment = al("center")
-
-    c = mc(ws, 25, 2, 25, TOTAL_COLS-1)
-    c.value = "P  L  A  N  N  E  R"; c.font = mf(13, color=ACCENT)
+    c = mc(ws, 23, 2, 23, TOTAL_COLS-1)
+    c.value = "P  L  A  N  N  E  R"; c.font = mf(18, color=ACCENT)
     c.alignment = al("center")
 
     # Thin accent rule under title
     for col in range(4, TOTAL_COLS-2):
-        ws.cell(26, col).border = bdr(bottom=sd("thin", ACCENT))
+        ws.cell(24, col).border = bdr(bottom=sd("thin", ACCENT))
 
-    c = mc(ws, 29, 2, 29, TOTAL_COLS-1)
+    c = mc(ws, 27, 2, 27, TOTAL_COLS-1)
     c.value = "August 2026 – December 2027"
     c.font = mf(10, italic=True, color=TEXT_MED); c.alignment = al("center")
 
     # ── Scripture quote
-    ws.row_dimensions[35].height = 18
-    ws.row_dimensions[36].height = 18
-    c = mc(ws, 35, 3, 36, TOTAL_COLS-2)
+    ws.row_dimensions[33].height = 18
+    ws.row_dimensions[34].height = 18
+    c = mc(ws, 33, 3, 34, TOTAL_COLS-2)
     c.value = '"You are worried and distracted by many things —\nthere is need of only one thing."  — Luke 10:41–42'
     c.font  = tf(14, italic=True, color=TEXT_MED); c.alignment = al("center")
 
     # ── Tagline
-    ws.row_dimensions[44].height = 16
-    c = mc(ws, 44, 2, 44, TOTAL_COLS-1)
+    ws.row_dimensions[42].height = 16
+    c = mc(ws, 42, 2, 42, TOTAL_COLS-1)
     c.value = "dream  ·  plan  ·  do  ·  thrive"
     c.font  = mf(9, italic=True, color=TEXT_LIGHT); c.alignment = al("center")
 
     # ── Branding
-    ws.row_dimensions[50].height = 18
-    _add_branding(ws, 50, 2, TOTAL_COLS-1)
+    ws.row_dimensions[48].height = 18
+    _add_branding(ws, 48, 2, TOTAL_COLS-1)
 
     # ── Thin accent rule just inside the bottom bar (mirrors top)
     for col in range(2, TOTAL_COLS):
