@@ -328,8 +328,16 @@ def make_important_contacts(wb):
         dot_line(ws, r+1, 2, 22)
         r += 2
 
-    # blank write-in rows
-    for wr in range(r, r+12):
+    # Additional contacts header
+    ws.row_dimensions[r].height = 16
+    hcell = mc(ws, r, 1, r, 22)
+    hcell.value = "Additional Contacts"
+    hcell.font = mf(9, bold=True, color=ACCENT); hcell.alignment = al("left","center")
+    bg(ws, r, 1, r, 22, WARM_LIGHT)
+    r += 1
+
+    # blank write-in rows — fill remaining page for any other contacts
+    for wr in range(r, 54):
         ws.row_dimensions[wr].height = 20
         dot_line(ws, wr, 1, 22)
 
