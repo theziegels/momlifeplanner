@@ -883,20 +883,16 @@ def make_vision_board(wb):
         bg(ws, wr, wc, wr+1, wc+1, WARM_LIGHT)
         bdr_range(ws, wr, wc, wr+1, wc+1, bdr(left=sd(),right=sd(),top=sd(),bottom=sd()))
 
-    boxes = [
-        (14, 1, 30, 11, "paste an image or write your dream here"),
-        (14,12, 30, TOTAL_COLS, "paste an image or write your dream here"),
-        (32, 1, 42, 11, "this year I will..."),
-        (32,12, 42, TOTAL_COLS, "I am grateful for..."),
-        (44, 1, 49, TOTAL_COLS, "my word(s) for this season:"),
-    ]
-    for r1,c1,r2,c2,hint in boxes:
-        bg(ws, r1,c1,r2,c2, WARM_LIGHT)
-        bdr_range(ws,r1,c1,r2,c2, bdr(left=sd("thin",WARM_MED),right=sd("thin",WARM_MED),
-                                       top=sd("thin",WARM_MED),bottom=sd("thin",WARM_MED)))
-        cell = mc(ws, r1,c1,r2,c2)
-        cell.value = hint; cell.font = mf(8, italic=True, color=TEXT_LIGHT)
-        cell.alignment = al("center")
+    # ── Open canvas for pasting images, words, and magazine clippings
+    bg(ws, 13, 1, 49, TOTAL_COLS, WARM_LIGHT)
+    bdr_range(ws, 13, 1, 49, TOTAL_COLS,
+              bdr(left=sd("thin",WARM_MED), right=sd("thin",WARM_MED),
+                  top=sd("thin",WARM_MED),  bottom=sd("thin",WARM_MED)))
+    cell = mc(ws, 13, 1, 49, TOTAL_COLS)
+    cell.value = ("paste photos, magazine clippings, or words that capture your dreams —\n"
+                   "let this page become a picture of the life you're working toward")
+    cell.font = mf(10, italic=True, color=TEXT_LIGHT)
+    cell.alignment = al("center")
     return ws
 
 
