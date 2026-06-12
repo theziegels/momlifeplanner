@@ -440,10 +440,10 @@ def make_monthly_layout(wb, year, month):
     # 7 day cols + divider + 3 notes cols — widened to fill landscape page
     landscape_all(ws, scale=80, rows=52, cols=10)
 
-    for d in range(1, 8):  ws.column_dimensions[get_column_letter(d)].width = 17.0
+    for d in range(1, 8):  ws.column_dimensions[get_column_letter(d)].width = 19.5
     ws.column_dimensions["H"].width = 0.8
-    ws.column_dimensions["I"].width = 26
-    ws.column_dimensions["J"].width = 26
+    ws.column_dimensions["I"].width = 27
+    ws.column_dimensions["J"].width = 27
 
     LINES = 5; BLOCK = 1 + LINES
 
