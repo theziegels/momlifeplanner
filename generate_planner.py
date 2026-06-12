@@ -708,24 +708,24 @@ def make_goals_page(wb, goal_type):
     # ── Section 1: Big Goals
     S1 = 6
     ws.row_dimensions[S1].height = 22   # taller to fit full section title text
-    c = mc(ws, S1, 2, S1, TOTAL_COLS)
+    c = mc(ws, S1, 1, S1, TOTAL_COLS)
     c.value = GOAL_TITLES[goal_type]
     c.font  = tf(13, bold=True, color=ACCENT); c.alignment = al("left","center")
-    bg(ws, S1, 2, S1, TOTAL_COLS, ACCENT_LIGHT)
+    bg(ws, S1, 1, S1, TOTAL_COLS, ACCENT_LIGHT)
 
     for i, lr in enumerate(range(S1+2, S1+14)):
         ws.row_dimensions[lr].height = 18
-        ws.cell(lr, 2).value = f"{i+1}."
-        ws.cell(lr, 2).font  = mf(9, color=ACCENT)
-        dot_line(ws, lr, 3, TOTAL_COLS)
+        ws.cell(lr, 1).value = f"{i+1}."
+        ws.cell(lr, 1).font  = mf(9, color=ACCENT)
+        dot_line(ws, lr, 2, TOTAL_COLS)
 
     # ── Section 2: Quarter by Quarter
     S2 = S1 + 17
     ws.row_dimensions[S2].height = 22
-    c = mc(ws, S2, 2, S2, TOTAL_COLS)
+    c = mc(ws, S2, 1, S2, TOTAL_COLS)
     c.value = "Quarter by Quarter"
     c.font  = tf(13, bold=True, color=ACCENT); c.alignment = al("left","center")
-    bg(ws, S2, 2, S2, TOTAL_COLS, ACCENT_LIGHT)
+    bg(ws, S2, 1, S2, TOTAL_COLS, ACCENT_LIGHT)
 
     QW = TOTAL_COLS // 4  # = 5
     q_labels = ["Q1  Jan–Mar","Q2  Apr–Jun","Q3  Jul–Sep","Q4  Oct–Dec"]
@@ -741,17 +741,17 @@ def make_goals_page(wb, goal_type):
     # ── Section 3: Action Steps
     S3 = S2 + 14
     ws.row_dimensions[S3].height = 22
-    c = mc(ws, S3, 2, S3, TOTAL_COLS)
+    c = mc(ws, S3, 1, S3, TOTAL_COLS)
     c.value = "Action Steps & Milestones"
     c.font  = tf(13, bold=True, color=ACCENT); c.alignment = al("left","center")
-    bg(ws, S3, 2, S3, TOTAL_COLS, ACCENT_LIGHT)
+    bg(ws, S3, 1, S3, TOTAL_COLS, ACCENT_LIGHT)
 
     for lr in range(S3+2, min(S3+12, 55)):
         ws.row_dimensions[lr].height = 18
-        ws.cell(lr, 2).value = "○"
-        ws.cell(lr, 2).font  = mf(9, color=ACCENT)
-        ws.cell(lr, 2).alignment = al("center")
-        dot_line(ws, lr, 3, TOTAL_COLS)
+        ws.cell(lr, 1).value = "○"
+        ws.cell(lr, 1).font  = mf(9, color=ACCENT)
+        ws.cell(lr, 1).alignment = al("center")
+        dot_line(ws, lr, 2, TOTAL_COLS)
 
     return ws
 
