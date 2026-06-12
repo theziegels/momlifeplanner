@@ -807,7 +807,7 @@ def _generate_brain_map_image(path):
         for i in range(3):
             ny=col_y+(i-1)*spacing; nx=col_x
             ax.add_patch(FancyBboxPatch((nx-nw/2,ny-nh/2),nw,nh,
-                boxstyle="round,pad=0.08",linewidth=0.8,
+                boxstyle="round,pad=0.08",linewidth=1.2,
                 edgecolor=WARM_DARK_M,facecolor=WARM_LIGHT_M,zorder=5))
             sx=bx+sux*branch_r*1.03; sy=by+suy*branch_r*1.03
             if use_left:    ex,ey=nx-nw/2,ny
@@ -829,7 +829,7 @@ def _generate_brain_map_image(path):
             fontsize=38,color="#"+TEXT_DARK,fontproperties=cg_prop)
 
     plt.tight_layout(pad=0.2)
-    plt.savefig(path,dpi=180,bbox_inches='tight',facecolor="#"+CREAM)
+    plt.savefig(path,dpi=220,bbox_inches='tight',facecolor="#"+CREAM)
     plt.close(fig)
 
 def make_brain_map(wb):
