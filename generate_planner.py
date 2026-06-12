@@ -259,18 +259,17 @@ def make_how_to_use(wb):
     ]
 
     for row, title, body in items:
-        # Accent strip spans title row AND all body rows (row to row+4)
-        bg(ws, row, 2, row+3, 2, ACCENT)
+        # Accent strip spans title row and body rows only (row to row+2)
+        bg(ws, row, 2, row+2, 2, ACCENT)
         ws.row_dimensions[row].height   = 20
         ws.row_dimensions[row+1].height = 14
         ws.row_dimensions[row+2].height = 14
-        ws.row_dimensions[row+3].height = 14
-        ws.row_dimensions[row+4].height = 8   # gap after section
+        ws.row_dimensions[row+3].height = 8   # gap after section
 
         c = mc(ws, row, 3, row, TOTAL_COLS)
         c.value = title; c.font = tf(14, bold=True, color=ACCENT); c.alignment = L
 
-        c = mc(ws, row+1, 3, row+3, TOTAL_COLS)
+        c = mc(ws, row+1, 3, row+2, TOTAL_COLS)
         c.value = body; c.font = mf(9, color=TEXT_MED)
         c.alignment = al("left", "top")
 
