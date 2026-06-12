@@ -1098,18 +1098,19 @@ def make_monthly_habit_tracker(wb, year, month):
             # Filled habit: name + circles + dotted borders
             ws.cell(r, 1).value = habit
             ws.cell(r, 1).font  = mf(8, color=TEXT_DARK)
-            bg(ws, r, 1, r, 1, WARM_LIGHT)
-            for d in range(1, days_in_month+1):
-                cell = ws.cell(r, d+1)
-                cell.value = "○"
-                cell.font  = Font(name="Montserrat", size=7, color=WARM_DARK)
-                cell.alignment = al("center")
-                cell.border = bdr(left=sd("hair", WARM_MED),
-                                  bottom=sd("dotted", WARM_DARK))
-            ws.cell(r, TOTAL_COLS).border = bdr(bottom=sd("dotted", WARM_DARK))
         else:
-            # Blank row: solid colored block, no circles or lines — visual cue to add habits
-            bg(ws, r, 1, r, TOTAL_COLS, WARM_LIGHT)
+            # Blank row: dotted write-in line for a custom habit, same circles as above
+            ws.cell(r, 1).border = bdr(bottom=sd("dotted", WARM_DARK))
+
+        bg(ws, r, 1, r, 1, WARM_LIGHT)
+        for d in range(1, days_in_month+1):
+            cell = ws.cell(r, d+1)
+            cell.value = "○"
+            cell.font  = Font(name="Montserrat", size=7, color=WARM_DARK)
+            cell.alignment = al("center")
+            cell.border = bdr(left=sd("hair", WARM_MED),
+                              bottom=sd("dotted", WARM_DARK))
+        ws.cell(r, TOTAL_COLS).border = bdr(bottom=sd("dotted", WARM_DARK))
 
         ws.row_dimensions[r+1].height = 3
 
