@@ -1404,10 +1404,10 @@ def make_season_tab(wb, season, year):
 
     # Left: cleaning tasks
     clean_tasks = SEASON_TASKS["cleaning"]["all"] + SEASON_TASKS["cleaning"].get(season, [])
-    # add 2 blank rows
-    clean_tasks += ["", ""]
+    # fill remaining rows in the section with blank write-in circles
+    clean_tasks += [""] * (27 - len(clean_tasks))
     lr = 6
-    for task in clean_tasks[:14]:
+    for task in clean_tasks[:27]:
         ws.row_dimensions[lr].height = 16
         ws.cell(lr, 1).value = "○"
         ws.cell(lr, 1).font  = mf(8, color=ACCENT)
@@ -1422,9 +1422,9 @@ def make_season_tab(wb, season, year):
 
     # Right: maintenance tasks
     maint_tasks = SEASON_TASKS["maintenance"]["all"] + SEASON_TASKS["maintenance"].get(season, [])
-    maint_tasks += ["", "", ""]
+    maint_tasks += [""] * (27 - len(maint_tasks))
     mr = 6
-    for task in maint_tasks[:14]:
+    for task in maint_tasks[:27]:
         ws.row_dimensions[mr].height = 16
         ws.cell(mr, RIGHT_START).value = "○"
         ws.cell(mr, RIGHT_START).font  = mf(8, color=TEXT_MED)
